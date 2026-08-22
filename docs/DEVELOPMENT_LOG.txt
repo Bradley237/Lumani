@@ -1,0 +1,27 @@
+================================================================================
+LUMANI — DEVELOPMENT LOG
+================================================================================
+
+[Task ID]       : F-002-A
+[Date]          : 2026-08-22
+[Description]   : Set up font configuration in pubspec.yaml for Poppins font family, configured light and dark theme assemblies in app_theme.dart using design tokens (AppColors, AppTextStyles, AppDimensions, AppRadius), and defined educational subsystem constants (Subsystem, ExamLevel) in subsystems.dart.
+[Files Created] :
+  - Frontend/lib/core/theme/app_theme.dart
+  - docs/DEVELOPMENT_LOG.txt
+  - docs/task-reports/F-002-A-core-theme-foundation.md
+[Files Modified]:
+  - Frontend/pubspec.yaml
+  - Frontend/lib/core/theme/app_colors.dart
+  - Frontend/lib/core/theme/app_text_styles.dart
+  - Frontend/lib/core/constants/subsystems.dart
+[Decisions]     :
+  - Assembled comprehensive lightTheme and darkTheme configurations in AppTheme.
+  - Enhanced Subsystem and ExamLevel enums with displayName and examLevels accessors.
+[Dependencies]  : None added.
+[Tests Executed]:
+  - flutter analyze (Passed, 0 issues)
+  - flutter test (Passed, all tests passed)
+[Unresolved]    : None.
+[Instructions for Next Session]:
+  - Proceed with next design system tokens / core widget or feature setup per implementation backlog.
+
