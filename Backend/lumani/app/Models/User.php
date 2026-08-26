@@ -52,6 +52,7 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
      * @var list<string>
      */
     protected $fillable = [
+        'name',
         'first_name',
         'last_name',
         'email',
@@ -130,7 +131,7 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
                 $parts = explode(' ', trim($value), 2);
 
                 return [
-                    'first_name' => $parts[0] ?? '',
+                    'first_name' => $parts[0],
                     'last_name' => $parts[1] ?? '',
                 ];
             }

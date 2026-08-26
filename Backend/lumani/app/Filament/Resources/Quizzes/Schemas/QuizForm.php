@@ -14,7 +14,7 @@ class QuizForm
             ->components([
                 Select::make('chapter_id')
                     ->relationship('chapter', 'title')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->title} (".($record->subject?->name ?? 'No Subject').')')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->title} (".($record->subject->name ?? 'No Subject').')')
                     ->searchable()
                     ->preload()
                     ->required(),

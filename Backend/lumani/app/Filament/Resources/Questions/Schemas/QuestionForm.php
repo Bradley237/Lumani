@@ -16,7 +16,7 @@ class QuestionForm
             ->components([
                 Select::make('quiz_id')
                     ->relationship('quiz', 'id')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => "Quiz #{$record->id} (Chapter: ".($record->chapter?->title ?? 'N/A').')')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => "Quiz #{$record->id} (Chapter: ".($record->chapter->title ?? 'N/A').')')
                     ->searchable()
                     ->preload()
                     ->required(),
