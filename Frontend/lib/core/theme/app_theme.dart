@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'app_colors.dart';
 import 'app_dimensions.dart';
 import 'app_radius.dart';
 import 'app_text_styles.dart';
 
 abstract final class AppTheme {
-/// Primary dark theme for Lumani (#090D16 base)
+  /// Primary dark theme for Lumani (#090D16 base)
   static ThemeData get darkTheme {
     const colorScheme = ColorScheme(
       brightness: Brightness.dark,

@@ -5,7 +5,7 @@ import 'app_colors.dart';
 abstract final class AppTextStyles {
   static const String fontFamily = 'Poppins';
 
-/// Display Large (32 / 700) - Hero numbers, major achievement headers
+  /// Display Large (32 / 700) - Hero numbers, major achievement headers
   static const TextStyle displayLarge = TextStyle(
     fontFamily: fontFamily,
     fontSize: 32.0,

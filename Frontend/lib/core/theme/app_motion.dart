@@ -1,7 +1,6 @@
 import 'package:flutter/animation.dart';
 
 abstract final class AppMotion {
-
   static const Duration instant = Duration(milliseconds: 100);
 
   static const Duration fast = Duration(milliseconds: 200);

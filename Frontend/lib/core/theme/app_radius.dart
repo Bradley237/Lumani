@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppRadius {
-
   static const double radius4 = 4.0;
 
   static const double radius8 = 8.0;
@@ -13,7 +12,6 @@ abstract final class AppRadius {
   static const double radius24 = 24.0;
 
   static const double radiusPill = 999.0;
-
 
   static const Radius r4 = Radius.circular(radius4);
   static const Radius r8 = Radius.circular(radius8);

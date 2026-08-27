@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../theme/app_dimensions.dart';
 
 /// Screen size breakpoints for adaptive mobile & tablet rendering.

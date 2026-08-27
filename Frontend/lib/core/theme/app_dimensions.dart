@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-
 abstract final class AppDimensions {
-
   static const double space4 = 4.0;
 
   static const double space8 = 8.0;
