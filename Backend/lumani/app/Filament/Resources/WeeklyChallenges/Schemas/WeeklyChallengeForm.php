@@ -11,6 +11,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class WeeklyChallengeForm
@@ -69,6 +70,8 @@ class WeeklyChallengeForm
                     ->components([
                         Repeater::make('questions')
                             ->relationship('questions')
+                            ->defaultItems(0)
+                            ->addActionLabel('Add Question')
                             ->schema([
                                 Select::make('type')
                                     ->options(collect(ChallengeQuestionType::cases())->mapWithKeys(
@@ -84,11 +87,11 @@ class WeeklyChallengeForm
                                     ->label('MCQ Options (e.g. A, B, C, D)')
                                     ->keyLabel('Option Key (e.g., A)')
                                     ->valueLabel('Option Content')
-                                    ->visible(fn ($get) => $get('type') === ChallengeQuestionType::Mcq->value),
+                                    ->visible(fn (Get $get): bool => $get('type') === ChallengeQuestionType::Mcq->value),
                                 TextInput::make('correct_choice')
                                     ->label('Correct Choice Key (e.g., A)')
                                     ->maxLength(10)
-                                    ->visible(fn ($get) => $get('type') === ChallengeQuestionType::Mcq->value),
+                                    ->visible(fn (Get $get): bool => $get('type') === ChallengeQuestionType::Mcq->value),
                                 TextInput::make('max_points')
                                     ->numeric()
                                     ->required()
