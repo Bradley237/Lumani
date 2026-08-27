@@ -24,6 +24,7 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, Quiz> $quizzes
  * @property-read Collection<int, UserChapterUnlock> $unlocks
  * @property-read Collection<int, ChapterProgress> $progress
+ * @property-read Collection<int, AiTutorConversation> $tutorConversations
  */
 class Chapter extends Model
 {
@@ -97,5 +98,15 @@ class Chapter extends Model
     public function progress(): HasMany
     {
         return $this->hasMany(ChapterProgress::class);
+    }
+
+    /**
+     * Get the AI tutor conversations for the chapter.
+     *
+     * @return HasMany<AiTutorConversation, $this>
+     */
+    public function tutorConversations(): HasMany
+    {
+        return $this->hasMany(AiTutorConversation::class);
     }
 }

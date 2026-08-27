@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AiTutorController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CareerPathwayController;
 use App\Http\Controllers\Api\CareerProfileController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Api\ExamSessionController;
 use App\Http\Controllers\Api\MissionController;
 use App\Http\Controllers\Api\PastPaperController;
 use App\Http\Controllers\Api\QuizController;
+use App\Http\Controllers\Api\RevisionPlanController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\XpConversionController;
@@ -51,6 +53,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/career-profiles', [CareerProfileController::class, 'index'])->name('api.career-profiles.index');
     Route::post('/career-pathway/generate', [CareerPathwayController::class, 'generate'])->name('api.career-pathway.generate');
     Route::get('/career-pathway', [CareerPathwayController::class, 'show'])->name('api.career-pathway.show');
+
+    // Revision Plan
+    Route::post('/revision-plan/generate', [RevisionPlanController::class, 'generate'])->name('api.revision-plan.generate');
+    Route::get('/revision-plan', [RevisionPlanController::class, 'show'])->name('api.revision-plan.show');
+
+    // AI Tutor "Lumani"
+    Route::get('/tutor/conversations', [AiTutorController::class, 'index'])->name('api.tutor.conversations.index');
+    Route::post('/tutor/conversations', [AiTutorController::class, 'store'])->name('api.tutor.conversations.store');
+    Route::get('/tutor/conversations/{id}/messages', [AiTutorController::class, 'messages'])->name('api.tutor.conversations.messages');
+    Route::post('/tutor/conversations/{id}/messages', [AiTutorController::class, 'sendMessage'])->name('api.tutor.conversations.send-message');
 
     // Chapter and Past Paper Unlocks
     Route::post('/chapters/{id}/unlock', [ChapterUnlockController::class, 'unlock'])->name('api.chapters.unlock');

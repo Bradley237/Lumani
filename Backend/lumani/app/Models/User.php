@@ -59,6 +59,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read Collection<int, QuizAttempt> $quizAttempts
  * @property-read Collection<int, ExamSession> $examSessions
  * @property-read Collection<int, CareerPathway> $careerPathways
+ * @property-read Collection<int, AiTutorConversation> $tutorConversations
+ * @property-read Collection<int, RevisionPlan> $revisionPlans
  */
 class User extends Authenticatable implements FilamentUser, PasskeyUser
 {
@@ -280,5 +282,21 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
     public function careerPathways(): HasMany
     {
         return $this->hasMany(CareerPathway::class);
+    }
+
+    /**
+     * @return HasMany<AiTutorConversation, $this>
+     */
+    public function tutorConversations(): HasMany
+    {
+        return $this->hasMany(AiTutorConversation::class);
+    }
+
+    /**
+     * @return HasMany<RevisionPlan, $this>
+     */
+    public function revisionPlans(): HasMany
+    {
+        return $this->hasMany(RevisionPlan::class);
     }
 }
