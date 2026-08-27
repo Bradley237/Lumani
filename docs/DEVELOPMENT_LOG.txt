@@ -25,3 +25,35 @@ LUMANI — DEVELOPMENT LOG
 [Instructions for Next Session]:
   - Proceed with next design system tokens / core widget or feature setup per implementation backlog.
 
+--------------------------------------------------------------------------------
+[Task ID]       : F-002-B
+[Date]          : 2026-08-27
+[Description]   : Established complete Lumani Design System foundation: registered 18 Poppins font weights in pubspec.yaml, implemented semantic AppColors, AppTextStyles, AppDimensions (4pt scale), AppRadius (16px default), AppMotion, responsive utilities (ResponsiveContext & AdaptiveConstraintContainer), and configured AppTheme.darkTheme in lib/main.dart. Added comprehensive design system unit & widget tests.
+[Files Created] :
+  - Frontend/lib/core/theme/app_colors.dart
+  - Frontend/lib/core/theme/app_text_styles.dart
+  - Frontend/lib/core/theme/app_dimensions.dart
+  - Frontend/lib/core/theme/app_radius.dart
+  - Frontend/lib/core/theme/app_motion.dart
+  - Frontend/lib/core/theme/app_theme.dart
+  - Frontend/lib/core/responsive/responsive_utils.dart
+  - Frontend/test/design_system_test.dart
+  - Frontend/assets/images/.gitkeep
+  - docs/handoffs/01_LUMANI_DESIGN_SYSTEM_SETUP.md
+[Files Modified]:
+  - Frontend/pubspec.yaml
+  - Frontend/lib/main.dart
+  - docs/DEVELOPMENT_LOG.txt
+[Decisions]     :
+  - Standardized default card/input/button radius at 16px.
+  - Standardized deep dark theme (#090D16 base, #131A29 surface, #1D263B elevated).
+  - Configured 4-point spacing scale and minimum 48px touch targets.
+[Dependencies]  : None.
+[Tests Executed]:
+  - flutter analyze (Passed, 0 issues)
+  - flutter test (Passed, 13/13 tests passed)
+[Unresolved]    : None.
+[Instructions for Next Session]:
+  - Frontend developers can proceed with core reusable components and feature screens utilizing AppTheme and design tokens.
+
+

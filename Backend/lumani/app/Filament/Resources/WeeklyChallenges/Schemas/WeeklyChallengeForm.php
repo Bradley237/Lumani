@@ -92,6 +92,12 @@ class WeeklyChallengeForm
                                     ->label('Correct Choice Key (e.g., A)')
                                     ->maxLength(10)
                                     ->visible(fn (Get $get): bool => $get('type') === ChallengeQuestionType::Mcq->value),
+                                Textarea::make('marking_scheme')
+                                    ->label('Marking Scheme / Model Answer')
+                                    ->helperText('Expected key points, formula steps, or model answer used for AI grading assistance.')
+                                    ->rows(3)
+                                    ->columnSpanFull()
+                                    ->visible(fn (Get $get): bool => $get('type') === ChallengeQuestionType::Structural->value),
                                 TextInput::make('max_points')
                                     ->numeric()
                                     ->required()

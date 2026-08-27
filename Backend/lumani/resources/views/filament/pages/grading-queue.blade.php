@@ -42,6 +42,15 @@
                         </p>
                     </div>
 
+                    @if(!empty($ans->question->marking_scheme))
+                        <div>
+                            <span class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">Marking Scheme / Model Answer</span>
+                            <div class="mt-1 text-sm text-gray-800 dark:text-gray-200 bg-indigo-50/50 dark:bg-indigo-950/20 p-3 rounded-lg border border-indigo-200 dark:border-indigo-900/50 whitespace-pre-wrap">
+                                {{ $ans->question->marking_scheme }}
+                            </div>
+                        </div>
+                    @endif
+
                     <div>
                         <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Student Answer</span>
                         <div class="mt-1 text-sm text-gray-800 dark:text-gray-200 bg-amber-50/50 dark:bg-amber-950/20 p-3 rounded-lg border border-amber-200 dark:border-amber-900/50 whitespace-pre-wrap">
@@ -49,10 +58,33 @@
                         </div>
                     </div>
 
+                    @if($ans->suggested_points !== null || $ans->suggested_justification !== null)
+                        <div class="bg-purple-50/60 dark:bg-purple-950/30 p-4 rounded-xl border border-purple-200 dark:border-purple-900/60 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <x-filament::icon icon="heroicon-o-sparkles" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                                    <span class="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300">
+                                        AI Grading Suggestion
+                                    </span>
+                                </div>
+                                @if($ans->suggested_points !== null)
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200">
+                                        Suggested Score: {{ $ans->suggested_points }} / {{ $ans->question->max_points }} pts
+                                    </span>
+                                @endif
+                            </div>
+                            @if(!empty($ans->suggested_justification))
+                                <p class="text-sm text-purple-900 dark:text-purple-200">
+                                    {{ $ans->suggested_justification }}
+                                </p>
+                            @endif
+                        </div>
+                    @endif
+
                     <div class="pt-2 flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center gap-3">
                             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Score (Max {{ $ans->question->max_points }}):
+                                Final Score (Max {{ $ans->question->max_points }}):
                             </label>
                             <input
                                 type="number"

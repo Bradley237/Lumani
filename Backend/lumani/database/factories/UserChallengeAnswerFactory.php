@@ -25,6 +25,8 @@ class UserChallengeAnswerFactory extends Factory
             'selected_choice' => 'A',
             'answer_text' => null,
             'points_awarded' => 10,
+            'suggested_points' => null,
+            'suggested_justification' => null,
         ];
     }
 }

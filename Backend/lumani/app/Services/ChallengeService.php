@@ -19,7 +19,8 @@ use InvalidArgumentException;
 class ChallengeService
 {
     public function __construct(
-        protected CoinService $coinService
+        protected CoinService $coinService,
+        protected GradingAssistantService $gradingAssistantService,
     ) {}
 
     /**
@@ -107,6 +108,9 @@ class ChallengeService
                 $answerText = $ansData['answer_text'] ?? null;
                 $pointsAwarded = null;
 
+                $suggestedPoints = null;
+                $suggestedJustification = null;
+
                 if ($question->type === ChallengeQuestionType::Mcq) {
                     if ($selectedChoice !== null && strtoupper(trim((string) $selectedChoice)) === strtoupper(trim((string) $question->correct_choice))) {
                         $pointsAwarded = $question->max_points;
@@ -117,6 +121,14 @@ class ChallengeService
                 } else {
                     $hasStructural = true;
                     $pointsAwarded = null;
+
+                    if ($answerText !== null && trim((string) $answerText) !== '') {
+                        $suggestion = $this->gradingAssistantService->suggestScore($question, (string) $answerText);
+                        if ($suggestion !== null) {
+                            $suggestedPoints = $suggestion['suggested_points'];
+                            $suggestedJustification = $suggestion['suggested_justification'];
+                        }
+                    }
                 }
 
                 $totalMaxPoints += $question->max_points;
@@ -130,6 +142,8 @@ class ChallengeService
                         'selected_choice' => $selectedChoice,
                         'answer_text' => $answerText,
                         'points_awarded' => $pointsAwarded,
+                        'suggested_points' => $suggestedPoints,
+                        'suggested_justification' => $suggestedJustification,
                     ]
                 );
             }
@@ -342,7 +356,7 @@ class ChallengeService
         $answers = null;
         if ($attempt->status === ChallengeAttemptStatus::Graded) {
             $answers = $attempt->answers->map(function (UserChallengeAnswer $ans): array {
-                return [
+                $data = [
                     'question_id' => $ans->question_id,
                     'type' => $ans->question->type->value,
                     'question_text' => $ans->question->question_text,
@@ -351,6 +365,12 @@ class ChallengeService
                     'points_awarded' => $ans->points_awarded,
                     'max_points' => $ans->question->max_points,
                 ];
+
+                if ($ans->question->type === ChallengeQuestionType::Structural && $ans->suggested_justification !== null) {
+                    $data['feedback'] = $ans->suggested_justification;
+                }
+
+                return $data;
             })->values()->all();
         }
 

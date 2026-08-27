@@ -42,7 +42,7 @@ class GradingQueue extends Page
         $ungraded = $this->getUngradedAnswers();
         foreach ($ungraded as $ans) {
             if (! isset($this->grades[$ans->id])) {
-                $this->grades[$ans->id] = '';
+                $this->grades[$ans->id] = $ans->suggested_points !== null ? (string) $ans->suggested_points : '';
             }
         }
     }

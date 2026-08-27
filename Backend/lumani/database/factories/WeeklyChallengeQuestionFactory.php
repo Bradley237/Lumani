@@ -30,6 +30,7 @@ class WeeklyChallengeQuestionFactory extends Factory
                 'D' => fake()->sentence(3),
             ],
             'correct_choice' => fake()->randomElement(['A', 'B', 'C', 'D']),
+            'marking_scheme' => null,
             'max_points' => 10,
             'order' => fake()->numberBetween(1, 10),
         ];
@@ -38,12 +39,13 @@ class WeeklyChallengeQuestionFactory extends Factory
     /**
      * Indicate that the question is structural.
      */
-    public function structural(): static
+    public function structural(?string $markingScheme = null): static
     {
         return $this->state(fn (array $attributes) => [
             'type' => ChallengeQuestionType::Structural,
             'options' => null,
             'correct_choice' => null,
+            'marking_scheme' => $markingScheme ?? 'Model answer: expected key derivation steps and formulas.',
             'max_points' => 20,
         ]);
     }

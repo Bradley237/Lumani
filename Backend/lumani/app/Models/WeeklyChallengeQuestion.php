@@ -18,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property string $question_text
  * @property array<string, string>|null $options
  * @property string|null $correct_choice
+ * @property string|null $marking_scheme
  * @property int $max_points
  * @property int $order
  * @property Carbon|null $created_at
@@ -39,6 +40,7 @@ class WeeklyChallengeQuestion extends Model
         'question_text',
         'options',
         'correct_choice',
+        'marking_scheme',
         'max_points',
         'order',
     ];

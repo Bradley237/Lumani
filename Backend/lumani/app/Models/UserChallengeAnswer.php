@@ -15,6 +15,8 @@ use Illuminate\Support\Carbon;
  * @property string|null $selected_choice
  * @property string|null $answer_text
  * @property int|null $points_awarded
+ * @property int|null $suggested_points
+ * @property string|null $suggested_justification
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read UserChallengeAttempt $attempt
@@ -34,6 +36,8 @@ class UserChallengeAnswer extends Model
         'selected_choice',
         'answer_text',
         'points_awarded',
+        'suggested_points',
+        'suggested_justification',
     ];
 
     /**
@@ -45,6 +49,7 @@ class UserChallengeAnswer extends Model
             'attempt_id' => 'integer',
             'question_id' => 'integer',
             'points_awarded' => 'integer',
+            'suggested_points' => 'integer',
         ];
     }
 
