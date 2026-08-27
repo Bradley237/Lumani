@@ -1,10 +1,15 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CareerPathwayController;
+use App\Http\Controllers\Api\CareerProfileController;
 use App\Http\Controllers\Api\ChallengeController;
+use App\Http\Controllers\Api\ChapterProgressController;
 use App\Http\Controllers\Api\ChapterUnlockController;
+use App\Http\Controllers\Api\ExamSessionController;
 use App\Http\Controllers\Api\MissionController;
 use App\Http\Controllers\Api\PastPaperController;
+use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\XpConversionController;
@@ -38,10 +43,28 @@ Route::middleware('auth:sanctum')->group(function () {
     // XP Conversion
     Route::post('/xp/convert', [XpConversionController::class, 'convert'])->name('api.xp.convert');
 
+    // Chapter Progress & Dashboard
+    Route::post('/chapters/{id}/touch', [ChapterProgressController::class, 'touch'])->name('api.chapters.touch');
+    Route::get('/progress', [ChapterProgressController::class, 'progress'])->name('api.progress');
+
+    // Career Profiles & Pathway
+    Route::get('/career-profiles', [CareerProfileController::class, 'index'])->name('api.career-profiles.index');
+    Route::post('/career-pathway/generate', [CareerPathwayController::class, 'generate'])->name('api.career-pathway.generate');
+    Route::get('/career-pathway', [CareerPathwayController::class, 'show'])->name('api.career-pathway.show');
+
     // Chapter and Past Paper Unlocks
     Route::post('/chapters/{id}/unlock', [ChapterUnlockController::class, 'unlock'])->name('api.chapters.unlock');
     Route::post('/past-papers/{id}/unlock-paper', [PastPaperController::class, 'unlockPaper'])->name('api.past-papers.unlock-paper');
     Route::post('/past-papers/{id}/unlock-solution', [PastPaperController::class, 'unlockSolution'])->name('api.past-papers.unlock-solution');
+
+    // Exam Sessions (Timed Practice)
+    Route::post('/past-papers/{id}/exam-session/start', [ExamSessionController::class, 'start'])->name('api.past-papers.exam-session.start');
+    Route::post('/exam-sessions/{id}/submit', [ExamSessionController::class, 'submit'])->name('api.exam-sessions.submit');
+    Route::get('/exam-sessions/{id}/result', [ExamSessionController::class, 'result'])->name('api.exam-sessions.result');
+
+    // Quizzes
+    Route::get('/quizzes/{id}', [QuizController::class, 'show'])->name('api.quizzes.show');
+    Route::post('/quizzes/{id}/submit', [QuizController::class, 'submit'])->name('api.quizzes.submit');
 
     // Subscription
     Route::get('/subscription', [SubscriptionController::class, 'status'])->name('api.subscription.status');

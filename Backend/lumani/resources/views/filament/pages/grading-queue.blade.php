@@ -1,9 +1,11 @@
 <x-filament-panels::page>
     @php
-        $ungraded = $this->getUngradedAnswers();
+        $ungradedChallenges = $this->getUngradedAnswers();
+        $ungradedExams = $this->getUngradedExamAnswers();
+        $totalPending = $ungradedChallenges->count() + $ungradedExams->count();
     @endphp
 
-    @if($ungraded->isEmpty())
+    @if($totalPending === 0)
         <div class="p-8 text-center bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800">
             <div class="flex justify-center mb-3 text-emerald-500">
                 <x-filament::icon icon="heroicon-o-check-circle" class="w-12 h-12" />
@@ -12,100 +14,210 @@
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">There are no pending structural answers awaiting grading in the queue.</p>
         </div>
     @else
-        <div class="space-y-6">
+        <div class="space-y-8">
             <div class="flex items-center justify-between">
                 <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
-                    {{ $ungraded->count() }} pending answer(s) awaiting grading
+                    {{ $totalPending }} pending answer(s) awaiting grading across all active queues
                 </span>
             </div>
 
-            @foreach($ungraded as $ans)
-                <div class="p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-sm" wire:key="ans-{{ $ans->id }}">
-                    <div class="flex flex-wrap items-center justify-between border-b pb-3 border-gray-100 dark:border-gray-800 gap-2">
-                        <div>
-                            <span class="text-xs font-semibold uppercase tracking-wider text-primary-600 dark:text-primary-400">
-                                {{ $ans->attempt->challenge->title }}
-                            </span>
-                            <h4 class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                Student: {{ $ans->attempt->user->name }} ({{ $ans->attempt->user->email }})
-                            </h4>
-                        </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">
-                            Submitted: {{ $ans->attempt->submitted_at?->diffForHumans() ?? 'N/A' }}
-                        </div>
+            {{-- Weekly Challenge Answers --}}
+            @if($ungradedChallenges->isNotEmpty())
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 border-b pb-2 border-gray-200 dark:border-gray-800">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold bg-primary-100 dark:bg-primary-900/50 text-primary-800 dark:text-primary-200">
+                            Weekly Challenges ({{ $ungradedChallenges->count() }})
+                        </span>
                     </div>
 
-                    <div>
-                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Question</span>
-                        <p class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg border border-gray-100 dark:border-gray-800">
-                            {{ $ans->question->question_text }}
-                        </p>
-                    </div>
-
-                    @if(!empty($ans->question->marking_scheme))
-                        <div>
-                            <span class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">Marking Scheme / Model Answer</span>
-                            <div class="mt-1 text-sm text-gray-800 dark:text-gray-200 bg-indigo-50/50 dark:bg-indigo-950/20 p-3 rounded-lg border border-indigo-200 dark:border-indigo-900/50 whitespace-pre-wrap">
-                                {{ $ans->question->marking_scheme }}
-                            </div>
-                        </div>
-                    @endif
-
-                    <div>
-                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Student Answer</span>
-                        <div class="mt-1 text-sm text-gray-800 dark:text-gray-200 bg-amber-50/50 dark:bg-amber-950/20 p-3 rounded-lg border border-amber-200 dark:border-amber-900/50 whitespace-pre-wrap">
-                            {{ $ans->answer_text ?: 'No answer provided by student.' }}
-                        </div>
-                    </div>
-
-                    @if($ans->suggested_points !== null || $ans->suggested_justification !== null)
-                        <div class="bg-purple-50/60 dark:bg-purple-950/30 p-4 rounded-xl border border-purple-200 dark:border-purple-900/60 space-y-2">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <x-filament::icon icon="heroicon-o-sparkles" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                                    <span class="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300">
-                                        AI Grading Suggestion
+                    @foreach($ungradedChallenges as $ans)
+                        <div class="p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-sm" wire:key="challenge-ans-{{ $ans->id }}">
+                            <div class="flex flex-wrap items-center justify-between border-b pb-3 border-gray-100 dark:border-gray-800 gap-2">
+                                <div>
+                                    <span class="text-xs font-semibold uppercase tracking-wider text-primary-600 dark:text-primary-400">
+                                        {{ $ans->attempt->challenge->title }}
                                     </span>
+                                    <h4 class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                        Student: {{ $ans->attempt->user->name }} ({{ $ans->attempt->user->email }})
+                                    </h4>
                                 </div>
-                                @if($ans->suggested_points !== null)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200">
-                                        Suggested Score: {{ $ans->suggested_points }} / {{ $ans->question->max_points }} pts
-                                    </span>
-                                @endif
+                                <div class="text-xs text-gray-500 dark:text-gray-400">
+                                    Submitted: {{ $ans->attempt->submitted_at?->diffForHumans() ?? 'N/A' }}
+                                </div>
                             </div>
-                            @if(!empty($ans->suggested_justification))
-                                <p class="text-sm text-purple-900 dark:text-purple-200">
-                                    {{ $ans->suggested_justification }}
+
+                            <div>
+                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Question</span>
+                                <p class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg border border-gray-100 dark:border-gray-800">
+                                    {{ $ans->question->question_text }}
                                 </p>
+                            </div>
+
+                            @if(!empty($ans->question->marking_scheme))
+                                <div>
+                                    <span class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">Marking Scheme / Model Answer</span>
+                                    <div class="mt-1 text-sm text-gray-800 dark:text-gray-200 bg-indigo-50/50 dark:bg-indigo-950/20 p-3 rounded-lg border border-indigo-200 dark:border-indigo-900/50 whitespace-pre-wrap">
+                                        {{ $ans->question->marking_scheme }}
+                                    </div>
+                                </div>
                             @endif
-                        </div>
-                    @endif
 
-                    <div class="pt-2 flex flex-wrap items-center justify-between gap-4">
-                        <div class="flex items-center gap-3">
-                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Final Score (Max {{ $ans->question->max_points }}):
-                            </label>
-                            <input
-                                type="number"
-                                min="0"
-                                max="{{ $ans->question->max_points }}"
-                                wire:model="grades.{{ $ans->id }}"
-                                placeholder="0 - {{ $ans->question->max_points }}"
-                                class="w-32 rounded-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:border-primary-500 focus:ring-primary-500"
-                            />
-                        </div>
+                            <div>
+                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Student Answer</span>
+                                <div class="mt-1 text-sm text-gray-800 dark:text-gray-200 bg-amber-50/50 dark:bg-amber-950/20 p-3 rounded-lg border border-amber-200 dark:border-amber-900/50 whitespace-pre-wrap">
+                                    {{ $ans->answer_text ?: 'No answer provided by student.' }}
+                                </div>
+                            </div>
 
-                        <x-filament::button
-                            wire:click="gradeAnswer({{ $ans->id }})"
-                            color="success"
-                            size="sm"
-                        >
-                            Submit Grade
-                        </x-filament::button>
-                    </div>
+                            @if($ans->suggested_points !== null || $ans->suggested_justification !== null)
+                                <div class="bg-purple-50/60 dark:bg-purple-950/30 p-4 rounded-xl border border-purple-200 dark:border-purple-900/60 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <x-filament::icon icon="heroicon-o-sparkles" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                                            <span class="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300">
+                                                AI Grading Suggestion
+                                            </span>
+                                        </div>
+                                        @if($ans->suggested_points !== null)
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200">
+                                                Suggested Score: {{ $ans->suggested_points }} / {{ $ans->question->max_points }} pts
+                                            </span>
+                                        @endif
+                                    </div>
+                                    @if(!empty($ans->suggested_justification))
+                                        <p class="text-sm text-purple-900 dark:text-purple-200">
+                                            {{ $ans->suggested_justification }}
+                                        </p>
+                                    @endif
+                                </div>
+                            @endif
+
+                            <div class="pt-2 flex flex-wrap items-center justify-between gap-4">
+                                <div class="flex items-center gap-3">
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Final Score (Max {{ $ans->question->max_points }}):
+                                    </label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        max="{{ $ans->question->max_points }}"
+                                        wire:model="grades.{{ $ans->id }}"
+                                        placeholder="0 - {{ $ans->question->max_points }}"
+                                        class="w-32 rounded-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:border-primary-500 focus:ring-primary-500"
+                                    />
+                                </div>
+
+                                <x-filament::button
+                                    wire:click="gradeAnswer({{ $ans->id }})"
+                                    color="success"
+                                    size="sm"
+                                >
+                                    Submit Grade
+                                </x-filament::button>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
-            @endforeach
+            @endif
+
+            {{-- Exam Session Answers --}}
+            @if($ungradedExams->isNotEmpty())
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 border-b pb-2 border-gray-200 dark:border-gray-800">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200">
+                            Timed Exam Practice Sessions ({{ $ungradedExams->count() }})
+                        </span>
+                    </div>
+
+                    @foreach($ungradedExams as $ans)
+                        <div class="p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-sm" wire:key="exam-ans-{{ $ans->id }}">
+                            <div class="flex flex-wrap items-center justify-between border-b pb-3 border-gray-100 dark:border-gray-800 gap-2">
+                                <div>
+                                    <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                                        {{ $ans->session->pastPaper->title }} ({{ $ans->session->pastPaper->subject->name }})
+                                    </span>
+                                    <h4 class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                        Student: {{ $ans->session->user->name }} ({{ $ans->session->user->email }})
+                                    </h4>
+                                </div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">
+                                    Submitted: {{ $ans->session->submitted_at?->diffForHumans() ?? 'N/A' }}
+                                </div>
+                            </div>
+
+                            <div>
+                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Question</span>
+                                <p class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg border border-gray-100 dark:border-gray-800">
+                                    {{ $ans->question->question_text }}
+                                </p>
+                            </div>
+
+                            @if(!empty($ans->question->marking_scheme))
+                                <div>
+                                    <span class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">Marking Scheme / Model Answer</span>
+                                    <div class="mt-1 text-sm text-gray-800 dark:text-gray-200 bg-indigo-50/50 dark:bg-indigo-950/20 p-3 rounded-lg border border-indigo-200 dark:border-indigo-900/50 whitespace-pre-wrap">
+                                        {{ $ans->question->marking_scheme }}
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div>
+                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Student Answer</span>
+                                <div class="mt-1 text-sm text-gray-800 dark:text-gray-200 bg-amber-50/50 dark:bg-amber-950/20 p-3 rounded-lg border border-amber-200 dark:border-amber-900/50 whitespace-pre-wrap">
+                                    {{ $ans->answer_text ?: 'No answer provided by student.' }}
+                                </div>
+                            </div>
+
+                            @if($ans->suggested_points !== null || $ans->suggested_justification !== null)
+                                <div class="bg-purple-50/60 dark:bg-purple-950/30 p-4 rounded-xl border border-purple-200 dark:border-purple-900/60 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <x-filament::icon icon="heroicon-o-sparkles" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                                            <span class="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300">
+                                                AI Grading Suggestion
+                                            </span>
+                                        </div>
+                                        @if($ans->suggested_points !== null)
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200">
+                                                Suggested Score: {{ $ans->suggested_points }} / {{ $ans->question->max_points }} pts
+                                            </span>
+                                        @endif
+                                    </div>
+                                    @if(!empty($ans->suggested_justification))
+                                        <p class="text-sm text-purple-900 dark:text-purple-200">
+                                            {{ $ans->suggested_justification }}
+                                        </p>
+                                    @endif
+                                </div>
+                            @endif
+
+                            <div class="pt-2 flex flex-wrap items-center justify-between gap-4">
+                                <div class="flex items-center gap-3">
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Final Score (Max {{ $ans->question->max_points }}):
+                                    </label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        max="{{ $ans->question->max_points }}"
+                                        wire:model="examGrades.{{ $ans->id }}"
+                                        placeholder="0 - {{ $ans->question->max_points }}"
+                                        class="w-32 rounded-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:border-primary-500 focus:ring-primary-500"
+                                    />
+                                </div>
+
+                                <x-filament::button
+                                    wire:click="gradeExamAnswer({{ $ans->id }})"
+                                    color="success"
+                                    size="sm"
+                                >
+                                    Submit Grade
+                                </x-filament::button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
         </div>
     @endif
 </x-filament-panels::page>

@@ -23,6 +23,7 @@ use Illuminate\Support\Carbon;
  * @property-read Subject $subject
  * @property-read Collection<int, Quiz> $quizzes
  * @property-read Collection<int, UserChapterUnlock> $unlocks
+ * @property-read Collection<int, ChapterProgress> $progress
  */
 class Chapter extends Model
 {
@@ -86,5 +87,15 @@ class Chapter extends Model
     public function unlocks(): HasMany
     {
         return $this->hasMany(UserChapterUnlock::class);
+    }
+
+    /**
+     * Get the user progress records for the chapter.
+     *
+     * @return HasMany<ChapterProgress, $this>
+     */
+    public function progress(): HasMany
+    {
+        return $this->hasMany(ChapterProgress::class);
     }
 }

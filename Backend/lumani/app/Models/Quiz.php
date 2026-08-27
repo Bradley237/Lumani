@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\QuizFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +17,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Chapter $chapter
+ * @property-read Collection<int, Question> $questions
+ * @property-read Collection<int, QuizAttempt> $attempts
  */
 class Quiz extends Model
 {
@@ -62,5 +65,15 @@ class Quiz extends Model
     public function questions(): HasMany
     {
         return $this->hasMany(Question::class);
+    }
+
+    /**
+     * Get the attempts for the quiz.
+     *
+     * @return HasMany<QuizAttempt, $this>
+     */
+    public function attempts(): HasMany
+    {
+        return $this->hasMany(QuizAttempt::class);
     }
 }

@@ -25,6 +25,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read Subject $subject
  * @property-read Collection<int, UserPastPaperUnlock> $unlocks
+ * @property-read Collection<int, PastPaperQuestion> $questions
+ * @property-read Collection<int, ExamSession> $examSessions
  */
 class PastPaper extends Model
 {
@@ -73,5 +75,21 @@ class PastPaper extends Model
     public function unlocks(): HasMany
     {
         return $this->hasMany(UserPastPaperUnlock::class);
+    }
+
+    /**
+     * @return HasMany<PastPaperQuestion, $this>
+     */
+    public function questions(): HasMany
+    {
+        return $this->hasMany(PastPaperQuestion::class);
+    }
+
+    /**
+     * @return HasMany<ExamSession, $this>
+     */
+    public function examSessions(): HasMany
+    {
+        return $this->hasMany(ExamSession::class);
     }
 }

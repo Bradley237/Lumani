@@ -51,6 +51,14 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read Collection<int, User> $referrals
  * @property-read Collection<int, CoinTransaction> $coinTransactions
  * @property-read Collection<int, UserMissionProgress> $missionProgress
+ * @property-read Collection<int, Subscription> $subscriptions
+ * @property-read Collection<int, UserChapterUnlock> $chapterUnlocks
+ * @property-read Collection<int, UserPastPaperUnlock> $pastPaperUnlocks
+ * @property-read Collection<int, UserChallengeAttempt> $challengeAttempts
+ * @property-read Collection<int, ChapterProgress> $chapterProgress
+ * @property-read Collection<int, QuizAttempt> $quizAttempts
+ * @property-read Collection<int, ExamSession> $examSessions
+ * @property-read Collection<int, CareerPathway> $careerPathways
  */
 class User extends Authenticatable implements FilamentUser, PasskeyUser
 {
@@ -240,5 +248,37 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
     public function challengeAttempts(): HasMany
     {
         return $this->hasMany(UserChallengeAttempt::class);
+    }
+
+    /**
+     * @return HasMany<ChapterProgress, $this>
+     */
+    public function chapterProgress(): HasMany
+    {
+        return $this->hasMany(ChapterProgress::class);
+    }
+
+    /**
+     * @return HasMany<QuizAttempt, $this>
+     */
+    public function quizAttempts(): HasMany
+    {
+        return $this->hasMany(QuizAttempt::class);
+    }
+
+    /**
+     * @return HasMany<ExamSession, $this>
+     */
+    public function examSessions(): HasMany
+    {
+        return $this->hasMany(ExamSession::class);
+    }
+
+    /**
+     * @return HasMany<CareerPathway, $this>
+     */
+    public function careerPathways(): HasMany
+    {
+        return $this->hasMany(CareerPathway::class);
     }
 }

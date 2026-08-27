@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\PastPaperQuestion;
 use App\Models\WeeklyChallengeQuestion;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -14,7 +15,7 @@ class GradingAssistantService
      *
      * @return array{suggested_points: int, suggested_justification: string}|null
      */
-    public function suggestScore(WeeklyChallengeQuestion $question, string $studentAnswer): ?array
+    public function suggestScore(WeeklyChallengeQuestion|PastPaperQuestion $question, string $studentAnswer): ?array
     {
         $apiKey = config('services.gemini.api_key');
         $model = config('services.gemini.model', 'gemini-2.5-flash');
