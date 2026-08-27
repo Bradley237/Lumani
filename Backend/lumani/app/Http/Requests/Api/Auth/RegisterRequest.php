@@ -29,6 +29,7 @@ class RegisterRequest extends FormRequest
             'password' => ['required', 'string', 'confirmed', 'min:8'],
             'preferred_language' => ['nullable', 'string', 'in:en,fr'],
             'phone_number' => ['nullable', 'string', 'max:50'],
+            'referral_code' => ['nullable', 'string', 'max:32', 'exists:users,referral_code'],
         ];
     }
 }

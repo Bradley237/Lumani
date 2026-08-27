@@ -8,10 +8,14 @@ use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -28,8 +32,11 @@ use Laravel\Sanctum\HasApiTokens;
  * @property UserRole $role
  * @property string $preferred_language
  * @property string|null $phone_number
+ * @property string|null $referral_code
+ * @property int|null $referred_by_user_id
  * @property int $coin_balance
  * @property int $experience_points
+ * @property int $xp_converted_total
  * @property int $day_streak
  * @property string|null $exam_system
  * @property string|null $level
@@ -40,6 +47,10 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read User|null $referrer
+ * @property-read Collection<int, User> $referrals
+ * @property-read Collection<int, CoinTransaction> $coinTransactions
+ * @property-read Collection<int, UserMissionProgress> $missionProgress
  */
 class User extends Authenticatable implements FilamentUser, PasskeyUser
 {
@@ -60,8 +71,11 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
         'role',
         'preferred_language',
         'phone_number',
+        'referral_code',
+        'referred_by_user_id',
         'coin_balance',
         'experience_points',
+        'xp_converted_total',
         'day_streak',
         'exam_system',
         'level',
@@ -90,6 +104,30 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
     ];
 
     /**
+     * Boot the model.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (User $user): void {
+            if (empty($user->referral_code)) {
+                $user->referral_code = static::generateUniqueReferralCode();
+            }
+        });
+    }
+
+    /**
+     * Generate a unique uppercase alphanumeric referral code.
+     */
+    public static function generateUniqueReferralCode(): string
+    {
+        do {
+            $code = strtoupper(Str::random(8));
+        } while (static::where('referral_code', $code)->exists());
+
+        return $code;
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -101,8 +139,10 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'role' => UserRole::class,
+            'referred_by_user_id' => 'integer',
             'coin_balance' => 'integer',
             'experience_points' => 'integer',
+            'xp_converted_total' => 'integer',
             'day_streak' => 'integer',
             'exam_date' => 'date',
         ];
@@ -136,5 +176,37 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
                 ];
             }
         );
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function referrer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'referred_by_user_id');
+    }
+
+    /**
+     * @return HasMany<User, $this>
+     */
+    public function referrals(): HasMany
+    {
+        return $this->hasMany(User::class, 'referred_by_user_id');
+    }
+
+    /**
+     * @return HasMany<CoinTransaction, $this>
+     */
+    public function coinTransactions(): HasMany
+    {
+        return $this->hasMany(CoinTransaction::class);
+    }
+
+    /**
+     * @return HasMany<UserMissionProgress, $this>
+     */
+    public function missionProgress(): HasMany
+    {
+        return $this->hasMany(UserMissionProgress::class);
     }
 }

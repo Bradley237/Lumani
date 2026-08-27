@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Chapter;
+use App\Models\DailyCheckinReward;
+use App\Models\Mission;
 use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\Subject;
@@ -62,4 +64,22 @@ test('admin can access questions index and create page', function () {
     $this->actingAs($admin)->get('/admin/questions')->assertOk();
     $this->actingAs($admin)->get('/admin/questions/create')->assertOk();
     $this->actingAs($admin)->get("/admin/questions/{$question->id}/edit")->assertOk();
+});
+
+test('admin can access missions index and create page', function () {
+    $admin = User::factory()->admin()->create();
+    $mission = Mission::factory()->create();
+
+    $this->actingAs($admin)->get('/admin/missions')->assertOk();
+    $this->actingAs($admin)->get('/admin/missions/create')->assertOk();
+    $this->actingAs($admin)->get("/admin/missions/{$mission->id}/edit")->assertOk();
+});
+
+test('admin can access daily checkin rewards index and create page', function () {
+    $admin = User::factory()->admin()->create();
+    $reward = DailyCheckinReward::factory()->create();
+
+    $this->actingAs($admin)->get('/admin/daily-checkin-rewards')->assertOk();
+    $this->actingAs($admin)->get('/admin/daily-checkin-rewards/create')->assertOk();
+    $this->actingAs($admin)->get("/admin/daily-checkin-rewards/{$reward->id}/edit")->assertOk();
 });

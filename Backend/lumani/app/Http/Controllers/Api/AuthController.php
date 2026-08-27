@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Auth\LoginRequest;
 use App\Http\Requests\Api\Auth\RegisterRequest;
 use App\Models\User;
+use App\Services\MissionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +15,10 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        protected MissionService $missionService
+    ) {}
+
     /**
      * Handle mobile user registration.
      */
@@ -31,8 +36,13 @@ class AuthController extends Controller
             'phone_number' => $validated['phone_number'] ?? null,
             'coin_balance' => 0,
             'experience_points' => 0,
+            'xp_converted_total' => 0,
             'day_streak' => 0,
         ]);
+
+        if (! empty($validated['referral_code'])) {
+            $this->missionService->processReferral($user, $validated['referral_code']);
+        }
 
         $token = $user->createToken('mobile-app')->plainTextToken;
 
@@ -40,7 +50,7 @@ class AuthController extends Controller
             'message' => 'User registered successfully.',
             'token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user,
+            'user' => $user->fresh(),
         ], 201);
     }
 
