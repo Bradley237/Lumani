@@ -12,6 +12,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class GradingQueue extends Page
@@ -66,7 +67,7 @@ class GradingQueue extends Page
     public function gradeAnswer(int $answerId, ChallengeService $challengeService): void
     {
         /** @var User $admin */
-        $admin = auth()->user();
+        $admin = Auth::user();
 
         /** @var UserChallengeAnswer|null $answer */
         $answer = UserChallengeAnswer::with(['question', 'attempt.user', 'attempt.challenge'])->find($answerId);
