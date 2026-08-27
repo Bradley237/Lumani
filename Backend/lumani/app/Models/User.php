@@ -233,4 +233,12 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
     {
         return $this->hasMany(UserPastPaperUnlock::class);
     }
+
+    /**
+     * @return HasMany<UserChallengeAttempt, $this>
+     */
+    public function challengeAttempts(): HasMany
+    {
+        return $this->hasMany(UserChallengeAttempt::class);
+    }
 }

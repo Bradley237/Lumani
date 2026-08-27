@@ -7,6 +7,7 @@ enum CoinTransactionType: string
     case EarnedMission = 'earned_mission';
     case EarnedReferral = 'earned_referral';
     case EarnedXpConversion = 'earned_xp_conversion';
+    case EarnedChallenge = 'earned_challenge';
     case SpentUnlock = 'spent_unlock';
     case SpentAiTutor = 'spent_ai_tutor';
 
@@ -16,6 +17,7 @@ enum CoinTransactionType: string
             self::EarnedMission => 'Earned from Mission',
             self::EarnedReferral => 'Earned from Referral',
             self::EarnedXpConversion => 'Earned from XP Conversion',
+            self::EarnedChallenge => 'Earned from Weekly Challenge',
             self::SpentUnlock => 'Spent on Unlock',
             self::SpentAiTutor => 'Spent on AI Tutor',
         };
@@ -27,6 +29,7 @@ enum CoinTransactionType: string
             self::EarnedMission,
             self::EarnedReferral,
             self::EarnedXpConversion,
+            self::EarnedChallenge,
         ], true);
     }
 }

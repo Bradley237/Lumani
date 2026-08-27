@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ChallengeController;
 use App\Http\Controllers\Api\ChapterUnlockController;
 use App\Http\Controllers\Api\MissionController;
 use App\Http\Controllers\Api\PastPaperController;
@@ -44,4 +45,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Subscription
     Route::get('/subscription', [SubscriptionController::class, 'status'])->name('api.subscription.status');
+
+    // Weekly Challenges
+    Route::get('/challenges', [ChallengeController::class, 'index'])->name('api.challenges.index');
+    Route::post('/challenges/{id}/start', [ChallengeController::class, 'start'])->name('api.challenges.start');
+    Route::post('/challenges/{id}/submit', [ChallengeController::class, 'submit'])->name('api.challenges.submit');
+    Route::get('/challenges/{id}/result', [ChallengeController::class, 'result'])->name('api.challenges.result');
 });
