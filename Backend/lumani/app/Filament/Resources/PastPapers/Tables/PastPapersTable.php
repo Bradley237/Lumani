@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\Chapters\Tables;
+namespace App\Filament\Resources\PastPapers\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class ChaptersTable
+class PastPapersTable
 {
     public static function configure(Table $table): Table
     {
@@ -24,31 +23,25 @@ class ChaptersTable
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('order')
-                    ->numeric()
+                TextColumn::make('year')
+                    ->sortable(),
+                TextColumn::make('level')
+                    ->badge()
+                    ->sortable(),
+                TextColumn::make('exam_subsystem')
+                    ->badge()
                     ->sortable(),
                 TextColumn::make('coin_price')
-                    ->label('Coin Price')
+                    ->label('Paper Coins')
                     ->numeric()
                     ->sortable()
                     ->badge(),
-                TextColumn::make('xp_reward')
-                    ->label('XP Reward')
+                TextColumn::make('solution_coin_price')
+                    ->label('Solution Coins')
                     ->numeric()
-                    ->sortable(),
-                IconColumn::make('is_free')
-                    ->label('Free')
-                    ->boolean()
-                    ->sortable(),
-                TextColumn::make('quizzes_count')
-                    ->counts('quizzes')
-                    ->label('Quizzes')
-                    ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                    ->badge(),
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

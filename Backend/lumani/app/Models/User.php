@@ -209,4 +209,28 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
     {
         return $this->hasMany(UserMissionProgress::class);
     }
+
+    /**
+     * @return HasMany<Subscription, $this>
+     */
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    /**
+     * @return HasMany<UserChapterUnlock, $this>
+     */
+    public function chapterUnlocks(): HasMany
+    {
+        return $this->hasMany(UserChapterUnlock::class);
+    }
+
+    /**
+     * @return HasMany<UserPastPaperUnlock, $this>
+     */
+    public function pastPaperUnlocks(): HasMany
+    {
+        return $this->hasMany(UserPastPaperUnlock::class);
+    }
 }

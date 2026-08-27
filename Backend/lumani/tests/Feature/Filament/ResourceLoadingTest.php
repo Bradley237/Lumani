@@ -3,9 +3,11 @@
 use App\Models\Chapter;
 use App\Models\DailyCheckinReward;
 use App\Models\Mission;
+use App\Models\PastPaper;
 use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\Subject;
+use App\Models\Subscription;
 use App\Models\User;
 
 test('unauthenticated users are redirected from filament admin panel', function () {
@@ -82,4 +84,28 @@ test('admin can access daily checkin rewards index and create page', function ()
     $this->actingAs($admin)->get('/admin/daily-checkin-rewards')->assertOk();
     $this->actingAs($admin)->get('/admin/daily-checkin-rewards/create')->assertOk();
     $this->actingAs($admin)->get("/admin/daily-checkin-rewards/{$reward->id}/edit")->assertOk();
+});
+
+test('admin can access past papers index and create page', function () {
+    $admin = User::factory()->admin()->create();
+    $pastPaper = PastPaper::factory()->create();
+
+    $this->actingAs($admin)->get('/admin/past-papers')->assertOk();
+    $this->actingAs($admin)->get('/admin/past-papers/create')->assertOk();
+    $this->actingAs($admin)->get("/admin/past-papers/{$pastPaper->id}/edit")->assertOk();
+});
+
+test('admin can access subscriptions index and create page', function () {
+    $admin = User::factory()->admin()->create();
+    $subscription = Subscription::factory()->create();
+
+    $this->actingAs($admin)->get('/admin/subscriptions')->assertOk();
+    $this->actingAs($admin)->get('/admin/subscriptions/create')->assertOk();
+    $this->actingAs($admin)->get("/admin/subscriptions/{$subscription->id}/edit")->assertOk();
+});
+
+test('admin can access app settings page', function () {
+    $admin = User::factory()->admin()->create();
+
+    $this->actingAs($admin)->get('/admin/settings')->assertOk();
 });

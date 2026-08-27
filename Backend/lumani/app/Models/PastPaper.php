@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Database\Factories\ChapterFactory;
+use Database\Factories\PastPaperFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,54 +13,53 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property int $subject_id
+ * @property string|null $exam_subsystem
+ * @property string|null $level
+ * @property int $year
  * @property string $title
- * @property int $order
+ * @property string|null $file_path
  * @property int $coin_price
- * @property int|null $xp_reward
- * @property bool $is_free
+ * @property string|null $solution_file_path
+ * @property int $solution_coin_price
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Subject $subject
- * @property-read Collection<int, Quiz> $quizzes
- * @property-read Collection<int, UserChapterUnlock> $unlocks
+ * @property-read Collection<int, UserPastPaperUnlock> $unlocks
  */
-class Chapter extends Model
+class PastPaper extends Model
 {
-    /** @use HasFactory<ChapterFactory> */
+    /** @use HasFactory<PastPaperFactory> */
     use HasFactory;
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var list<string>
      */
     protected $fillable = [
         'subject_id',
+        'exam_subsystem',
+        'level',
+        'year',
         'title',
-        'order',
+        'file_path',
         'coin_price',
-        'xp_reward',
-        'is_free',
+        'solution_file_path',
+        'solution_coin_price',
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
      * @return array<string, string>
      */
     protected function casts(): array
     {
         return [
-            'order' => 'integer',
+            'subject_id' => 'integer',
+            'year' => 'integer',
             'coin_price' => 'integer',
-            'xp_reward' => 'integer',
-            'is_free' => 'boolean',
+            'solution_coin_price' => 'integer',
         ];
     }
 
     /**
-     * Get the subject that owns the chapter.
-     *
      * @return BelongsTo<Subject, $this>
      */
     public function subject(): BelongsTo
@@ -69,22 +68,10 @@ class Chapter extends Model
     }
 
     /**
-     * Get the quizzes for the chapter.
-     *
-     * @return HasMany<Quiz, $this>
-     */
-    public function quizzes(): HasMany
-    {
-        return $this->hasMany(Quiz::class);
-    }
-
-    /**
-     * Get the unlocks for the chapter.
-     *
-     * @return HasMany<UserChapterUnlock, $this>
+     * @return HasMany<UserPastPaperUnlock, $this>
      */
     public function unlocks(): HasMany
     {
-        return $this->hasMany(UserChapterUnlock::class);
+        return $this->hasMany(UserPastPaperUnlock::class);
     }
 }

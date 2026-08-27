@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             MissionAndRewardSeeder::class,
+            FreeChapterSeeder::class,
         ]);
 
         User::factory()->create([
