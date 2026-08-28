@@ -144,7 +144,7 @@ class TutorService
     protected function queryGeminiForReply(AiTutorConversation $conversation): ?string
     {
         $apiKey = config('services.gemini.api_key');
-        $model = config('services.gemini.model', 'gemini-2.5-flash');
+        $model = config('services.gemini.model', 'gemini-3.5-flash');
 
         if (empty($apiKey)) {
             Log::warning('TutorService: GEMINI_API_KEY is not configured.');

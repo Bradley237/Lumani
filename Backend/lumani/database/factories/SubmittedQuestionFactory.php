@@ -60,7 +60,7 @@ class SubmittedQuestionFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'review_status' => ReviewStatus::Approved,
-            'reviewed_by' => $admin?->id ?? User::factory()->admin(),
+            'reviewed_by' => $admin ? $admin->id : User::factory()->admin(),
             'review_notes' => null,
         ]);
     }
@@ -72,7 +72,7 @@ class SubmittedQuestionFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'review_status' => ReviewStatus::Rejected,
-            'reviewed_by' => $admin?->id ?? User::factory()->admin(),
+            'reviewed_by' => $admin ? $admin->id : User::factory()->admin(),
             'review_notes' => $notes,
         ]);
     }
@@ -84,7 +84,7 @@ class SubmittedQuestionFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'review_status' => ReviewStatus::Published,
-            'reviewed_by' => $admin?->id ?? User::factory()->admin(),
+            'reviewed_by' => $admin ? $admin->id : User::factory()->admin(),
         ]);
     }
 }

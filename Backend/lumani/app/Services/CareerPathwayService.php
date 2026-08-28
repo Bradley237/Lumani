@@ -173,7 +173,7 @@ class CareerPathwayService
     protected function queryGeminiForPathway(array $performanceSummary, Collection $careerProfiles): ?array
     {
         $apiKey = config('services.gemini.api_key');
-        $model = config('services.gemini.model', 'gemini-2.5-flash');
+        $model = config('services.gemini.model', 'gemini-3.5-flash');
 
         if (empty($apiKey)) {
             Log::warning('CareerPathwayService: GEMINI_API_KEY is not configured.');

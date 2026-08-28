@@ -18,7 +18,7 @@ class GradingAssistantService
     public function suggestScore(WeeklyChallengeQuestion|PastPaperQuestion $question, string $studentAnswer): ?array
     {
         $apiKey = config('services.gemini.api_key');
-        $model = config('services.gemini.model', 'gemini-2.5-flash');
+        $model = config('services.gemini.model', 'gemini-3.5-flash');
 
         if (empty($apiKey)) {
             Log::info('GradingAssistantService: GEMINI_API_KEY is not configured, skipping AI suggestion.');

@@ -6,6 +6,7 @@ use Database\Factories\SubjectFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Carbon;
 
 /**
@@ -38,5 +39,15 @@ class Subject extends Model
     public function chapters(): HasMany
     {
         return $this->hasMany(Chapter::class)->orderBy('order');
+    }
+
+    /**
+     * Get all chapter unlocks for the subject.
+     *
+     * @return HasManyThrough<UserChapterUnlock, Chapter, $this>
+     */
+    public function chapterUnlocks(): HasManyThrough
+    {
+        return $this->hasManyThrough(UserChapterUnlock::class, Chapter::class);
     }
 }
