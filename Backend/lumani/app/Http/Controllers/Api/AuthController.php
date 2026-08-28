@@ -6,11 +6,13 @@ use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Auth\LoginRequest;
 use App\Http\Requests\Api\Auth\RegisterRequest;
+use App\Mail\WelcomeEmail;
 use App\Models\User;
 use App\Services\MissionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
@@ -43,6 +45,8 @@ class AuthController extends Controller
         if (! empty($validated['referral_code'])) {
             $this->missionService->processReferral($user, $validated['referral_code']);
         }
+
+        Mail::to($user->email)->send(new WelcomeEmail($user));
 
         $token = $user->createToken('mobile-app')->plainTextToken;
 

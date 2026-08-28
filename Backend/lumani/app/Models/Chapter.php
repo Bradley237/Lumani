@@ -109,4 +109,14 @@ class Chapter extends Model
     {
         return $this->hasMany(AiTutorConversation::class);
     }
+
+    /**
+     * Get the submitted questions for the chapter.
+     *
+     * @return HasMany<SubmittedQuestion, $this>
+     */
+    public function submittedQuestions(): HasMany
+    {
+        return $this->hasMany(SubmittedQuestion::class);
+    }
 }

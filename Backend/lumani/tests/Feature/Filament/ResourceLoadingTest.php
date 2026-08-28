@@ -7,6 +7,7 @@ use App\Models\PastPaper;
 use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\Subject;
+use App\Models\SubmittedQuestion;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Models\WeeklyChallenge;
@@ -124,4 +125,13 @@ test('admin can access grading queue page', function () {
     $admin = User::factory()->admin()->create();
 
     $this->actingAs($admin)->get('/admin/grading-queue')->assertOk();
+});
+
+test('admin can access submitted questions index and create page', function () {
+    $admin = User::factory()->admin()->create();
+    $submission = SubmittedQuestion::factory()->create();
+
+    $this->actingAs($admin)->get('/admin/submitted-questions')->assertOk();
+    $this->actingAs($admin)->get('/admin/submitted-questions/create')->assertOk();
+    $this->actingAs($admin)->get("/admin/submitted-questions/{$submission->id}/edit")->assertOk();
 });

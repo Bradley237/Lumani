@@ -11,6 +11,8 @@ enum CoinTransactionType: string
     case SpentUnlock = 'spent_unlock';
     case SpentAiTutor = 'spent_ai_tutor';
 
+    case EarnedSubscription = 'earned_subscription';
+
     public function label(): string
     {
         return match ($this) {
@@ -18,6 +20,7 @@ enum CoinTransactionType: string
             self::EarnedReferral => 'Earned from Referral',
             self::EarnedXpConversion => 'Earned from XP Conversion',
             self::EarnedChallenge => 'Earned from Weekly Challenge',
+            self::EarnedSubscription => 'Earned from Subscription Allotment',
             self::SpentUnlock => 'Spent on Unlock',
             self::SpentAiTutor => 'Spent on AI Tutor',
         };
@@ -30,6 +33,7 @@ enum CoinTransactionType: string
             self::EarnedReferral,
             self::EarnedXpConversion,
             self::EarnedChallenge,
+            self::EarnedSubscription,
         ], true);
     }
 }

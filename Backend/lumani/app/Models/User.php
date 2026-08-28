@@ -299,4 +299,20 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
     {
         return $this->hasMany(RevisionPlan::class);
     }
+
+    /**
+     * @return HasMany<SubmittedQuestion, $this>
+     */
+    public function submittedQuestions(): HasMany
+    {
+        return $this->hasMany(SubmittedQuestion::class, 'submitted_by');
+    }
+
+    /**
+     * @return HasMany<SubmittedQuestion, $this>
+     */
+    public function reviewedQuestions(): HasMany
+    {
+        return $this->hasMany(SubmittedQuestion::class, 'reviewed_by');
+    }
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ChapterUnlockController;
 use App\Http\Controllers\Api\ExamSessionController;
 use App\Http\Controllers\Api\MissionController;
 use App\Http\Controllers\Api\PastPaperController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\RevisionPlanController;
 use App\Http\Controllers\Api\SubscriptionController;
@@ -28,18 +29,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/register', [AuthController::class, 'register'])->name('api.register');
-Route::post('/login', [AuthController::class, 'login'])->name('api.login');
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:auth')->name('api.register');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth')->name('api.login');
+Route::post('/payments/callback', [PaymentController::class, 'callback'])->name('api.payments.callback');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
     Route::get('/user', [AuthController::class, 'user'])->name('api.user');
     Route::get('/user/referral-code', [UserController::class, 'referralCode'])->name('api.user.referral-code');
 
+    // Subscriptions
+    Route::get('/subscription', [SubscriptionController::class, 'status'])->name('api.subscription.status');
+    Route::post('/subscriptions/purchase', [SubscriptionController::class, 'purchase'])->name('api.subscriptions.purchase');
+    Route::post('/subscription/purchase', [SubscriptionController::class, 'purchase'])->name('api.subscription.purchase');
+
     // Missions
     Route::get('/missions', [MissionController::class, 'index'])->name('api.missions.index');
     Route::post('/missions/checkin', [MissionController::class, 'checkin'])->name('api.missions.checkin');
-    Route::post('/missions/watch-ad', [MissionController::class, 'watchAd'])->name('api.missions.watch-ad');
+    Route::post('/missions/watch-ad', [MissionController::class, 'watchAd'])->middleware('throttle:watch-ad')->name('api.missions.watch-ad');
     Route::post('/missions/complete/{missionKey}', [MissionController::class, 'complete'])->name('api.missions.complete');
 
     // XP Conversion
@@ -62,7 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tutor/conversations', [AiTutorController::class, 'index'])->name('api.tutor.conversations.index');
     Route::post('/tutor/conversations', [AiTutorController::class, 'store'])->name('api.tutor.conversations.store');
     Route::get('/tutor/conversations/{id}/messages', [AiTutorController::class, 'messages'])->name('api.tutor.conversations.messages');
-    Route::post('/tutor/conversations/{id}/messages', [AiTutorController::class, 'sendMessage'])->name('api.tutor.conversations.send-message');
+    Route::post('/tutor/conversations/{id}/messages', [AiTutorController::class, 'sendMessage'])->middleware('throttle:tutor-messages')->name('api.tutor.conversations.send-message');
 
     // Chapter and Past Paper Unlocks
     Route::post('/chapters/{id}/unlock', [ChapterUnlockController::class, 'unlock'])->name('api.chapters.unlock');
@@ -77,9 +84,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Quizzes
     Route::get('/quizzes/{id}', [QuizController::class, 'show'])->name('api.quizzes.show');
     Route::post('/quizzes/{id}/submit', [QuizController::class, 'submit'])->name('api.quizzes.submit');
-
-    // Subscription
-    Route::get('/subscription', [SubscriptionController::class, 'status'])->name('api.subscription.status');
 
     // Weekly Challenges
     Route::get('/challenges', [ChallengeController::class, 'index'])->name('api.challenges.index');
