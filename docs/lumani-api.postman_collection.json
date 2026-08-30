@@ -1,0 +1,782 @@
+{
+  "info": {
+    "_postman_id": "d3b07384-912e-4b68-80f4-52d1b820b123",
+    "name": "Lumani Mobile API",
+    "description": "Complete Postman collection for the Lumani educational platform API covering all 37 registered endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Samuel\",\n  \"last_name\": \"Eto'o\",\n  \"email\": \"samuel@example.com\",\n  \"password\": \"SecretPassword123!\",\n  \"password_confirmation\": \"SecretPassword123!\",\n  \"preferred_language\": \"en\",\n  \"phone_number\": \"+237670000000\",\n  \"referral_code\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/register",
+              "host": ["{{base_url}}"],
+              "path": ["register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var data = pm.response.json();",
+                  "    if (data.token) {",
+                  "        pm.collectionVariables.set('auth_token', data.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"samuel@example.com\",\n  \"password\": \"SecretPassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": ["{{base_url}}"],
+              "path": ["login"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/logout",
+              "host": ["{{base_url}}"],
+              "path": ["logout"]
+            }
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/user",
+              "host": ["{{base_url}}"],
+              "path": ["user"]
+            }
+          }
+        },
+        {
+          "name": "Get Referral Stats",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/user/referral-code",
+              "host": ["{{base_url}}"],
+              "path": ["user", "referral-code"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Content & Chapters",
+      "item": [
+        {
+          "name": "Get Overall Progress",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/progress",
+              "host": ["{{base_url}}"],
+              "path": ["progress"]
+            }
+          }
+        },
+        {
+          "name": "Touch Chapter",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/chapters/1/touch",
+              "host": ["{{base_url}}"],
+              "path": ["chapters", "1", "touch"]
+            }
+          }
+        },
+        {
+          "name": "Unlock Chapter",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/chapters/1/unlock",
+              "host": ["{{base_url}}"],
+              "path": ["chapters", "1", "unlock"]
+            }
+          }
+        },
+        {
+          "name": "Unlock Past Paper",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/past-papers/1/unlock-paper",
+              "host": ["{{base_url}}"],
+              "path": ["past-papers", "1", "unlock-paper"]
+            }
+          }
+        },
+        {
+          "name": "Unlock Past Paper Solution",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/past-papers/1/unlock-solution",
+              "host": ["{{base_url}}"],
+              "path": ["past-papers", "1", "unlock-solution"]
+            }
+          }
+        },
+        {
+          "name": "Get Quiz Questions",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/quizzes/1",
+              "host": ["{{base_url}}"],
+              "path": ["quizzes", "1"]
+            }
+          }
+        },
+        {
+          "name": "Submit Quiz Answers",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answers\": [\n    {\n      \"question_id\": 1,\n      \"selected_choice\": \"B\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/quizzes/1/submit",
+              "host": ["{{base_url}}"],
+              "path": ["quizzes", "1", "submit"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Coins & Missions",
+      "item": [
+        {
+          "name": "List Missions & Progress",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/missions",
+              "host": ["{{base_url}}"],
+              "path": ["missions"]
+            }
+          }
+        },
+        {
+          "name": "Claim Daily Check-in",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/missions/checkin",
+              "host": ["{{base_url}}"],
+              "path": ["missions", "checkin"]
+            }
+          }
+        },
+        {
+          "name": "Watch Ad Reward",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/missions/watch-ad",
+              "host": ["{{base_url}}"],
+              "path": ["missions", "watch-ad"]
+            }
+          }
+        },
+        {
+          "name": "Complete One-Time Mission",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/missions/complete/complete_profile",
+              "host": ["{{base_url}}"],
+              "path": ["missions", "complete", "complete_profile"]
+            }
+          }
+        },
+        {
+          "name": "Convert XP to Coins",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/xp/convert",
+              "host": ["{{base_url}}"],
+              "path": ["xp", "convert"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Subscriptions",
+      "item": [
+        {
+          "name": "Get Subscription Status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subscription",
+              "host": ["{{base_url}}"],
+              "path": ["subscription"]
+            }
+          }
+        },
+        {
+          "name": "Purchase Subscription",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tier\": \"tier_2000\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/subscriptions/purchase",
+              "host": ["{{base_url}}"],
+              "path": ["subscriptions", "purchase"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Weekly Challenge",
+      "item": [
+        {
+          "name": "List Active Challenges",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/challenges",
+              "host": ["{{base_url}}"],
+              "path": ["challenges"]
+            }
+          }
+        },
+        {
+          "name": "Start Challenge Attempt",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/challenges/1/start",
+              "host": ["{{base_url}}"],
+              "path": ["challenges", "1", "start"]
+            }
+          }
+        },
+        {
+          "name": "Submit Challenge Answers",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answers\": [\n    {\n      \"question_id\": 1,\n      \"selected_choice\": \"B\"\n    },\n    {\n      \"question_id\": 2,\n      \"answer_text\": \"Written response...\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/challenges/1/submit",
+              "host": ["{{base_url}}"],
+              "path": ["challenges", "1", "submit"]
+            }
+          }
+        },
+        {
+          "name": "Get Challenge Result",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/challenges/1/result",
+              "host": ["{{base_url}}"],
+              "path": ["challenges", "1", "result"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Exam Mode",
+      "item": [
+        {
+          "name": "Start Exam Session",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requested_minutes\": 90\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/past-papers/1/exam-session/start",
+              "host": ["{{base_url}}"],
+              "path": ["past-papers", "1", "exam-session", "start"]
+            }
+          }
+        },
+        {
+          "name": "Submit Exam Session",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answers\": [\n    {\n      \"question_id\": 1,\n      \"selected_choice\": \"A\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/exam-sessions/1/submit",
+              "host": ["{{base_url}}"],
+              "path": ["exam-sessions", "1", "submit"]
+            }
+          }
+        },
+        {
+          "name": "Get Exam Session Result",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/exam-sessions/1/result",
+              "host": ["{{base_url}}"],
+              "path": ["exam-sessions", "1", "result"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Career",
+      "item": [
+        {
+          "name": "List Career Profiles",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/career-profiles",
+              "host": ["{{base_url}}"],
+              "path": ["career-profiles"]
+            }
+          }
+        },
+        {
+          "name": "Generate Career Pathway",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/career-pathway/generate",
+              "host": ["{{base_url}}"],
+              "path": ["career-pathway", "generate"]
+            }
+          }
+        },
+        {
+          "name": "Get Current Career Pathway",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/career-pathway",
+              "host": ["{{base_url}}"],
+              "path": ["career-pathway"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. AI Tutor",
+      "item": [
+        {
+          "name": "List Conversations",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tutor/conversations",
+              "host": ["{{base_url}}"],
+              "path": ["tutor", "conversations"]
+            }
+          }
+        },
+        {
+          "name": "Start / Get Chapter Conversation",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"chapter_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tutor/conversations",
+              "host": ["{{base_url}}"],
+              "path": ["tutor", "conversations"]
+            }
+          }
+        },
+        {
+          "name": "Get Conversation Messages",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tutor/conversations/1/messages",
+              "host": ["{{base_url}}"],
+              "path": ["tutor", "conversations", "1", "messages"]
+            }
+          }
+        },
+        {
+          "name": "Send Message to AI Tutor",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Can you explain this step with an example?\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tutor/conversations/1/messages",
+              "host": ["{{base_url}}"],
+              "path": ["tutor", "conversations", "1", "messages"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Revision Plan",
+      "item": [
+        {
+          "name": "Generate Revision Plan",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"weekly_available_minutes\": 300,\n  \"available_days\": [1, 3, 5]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/revision-plan/generate",
+              "host": ["{{base_url}}"],
+              "path": ["revision-plan", "generate"]
+            }
+          }
+        },
+        {
+          "name": "Get Current Revision Plan",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{auth_token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/revision-plan",
+              "host": ["{{base_url}}"],
+              "path": ["revision-plan"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Payment Webhook",
+      "item": [
+        {
+          "name": "Process Payment Callback",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment_reference\": \"mock_pay_sample12345\",\n  \"status\": \"success\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/callback",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "callback"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
