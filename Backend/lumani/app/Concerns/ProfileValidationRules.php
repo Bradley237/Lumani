@@ -2,9 +2,13 @@
 
 namespace App\Concerns;
 
+use App\Enums\ExamLevel;
+use App\Enums\ExamSubsystem;
 use App\Models\User;
+use App\Rules\ValidExamPair;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 trait ProfileValidationRules
 {
@@ -18,6 +22,8 @@ trait ProfileValidationRules
         return [
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
+            'exam_system' => ['nullable', new Enum(ExamSubsystem::class)],
+            'level' => ['nullable', new Enum(ExamLevel::class), new ValidExamPair('exam_system')],
         ];
     }
 

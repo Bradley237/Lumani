@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\ExamLevel;
+use App\Enums\ExamSubsystem;
 use Database\Factories\ChapterFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,6 +16,8 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $subject_id
  * @property string $title
+ * @property ExamSubsystem|null $exam_subsystem
+ * @property ExamLevel|null $level
  * @property int $order
  * @property int $coin_price
  * @property int|null $xp_reward
@@ -39,6 +43,8 @@ class Chapter extends Model
     protected $fillable = [
         'subject_id',
         'title',
+        'exam_subsystem',
+        'level',
         'order',
         'coin_price',
         'xp_reward',
@@ -53,6 +59,8 @@ class Chapter extends Model
     protected function casts(): array
     {
         return [
+            'exam_subsystem' => ExamSubsystem::class,
+            'level' => ExamLevel::class,
             'order' => 'integer',
             'coin_price' => 'integer',
             'xp_reward' => 'integer',

@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\ExamLevel;
+use App\Enums\ExamSubsystem;
 use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
@@ -38,8 +39,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property int $experience_points
  * @property int $xp_converted_total
  * @property int $day_streak
- * @property string|null $exam_system
- * @property string|null $level
+ * @property ExamSubsystem|null $exam_system
+ * @property ExamLevel|null $level
  * @property Carbon|null $exam_date
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
@@ -154,6 +155,8 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
             'experience_points' => 'integer',
             'xp_converted_total' => 'integer',
             'day_streak' => 'integer',
+            'exam_system' => ExamSubsystem::class,
+            'level' => ExamLevel::class,
             'exam_date' => 'date',
         ];
     }

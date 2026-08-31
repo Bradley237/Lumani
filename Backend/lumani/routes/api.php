@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\CareerProfileController;
 use App\Http\Controllers\Api\ChallengeController;
 use App\Http\Controllers\Api\ChapterProgressController;
 use App\Http\Controllers\Api\ChapterUnlockController;
+use App\Http\Controllers\Api\ExamOptionController;
 use App\Http\Controllers\Api\ExamSessionController;
 use App\Http\Controllers\Api\MissionController;
 use App\Http\Controllers\Api\PastPaperController;
@@ -31,11 +32,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:auth')->name('api.register');
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth')->name('api.login');
+Route::get('/exam-options', [ExamOptionController::class, 'index'])->name('api.exam-options');
 Route::post('/payments/callback', [PaymentController::class, 'callback'])->name('api.payments.callback');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
     Route::get('/user', [AuthController::class, 'user'])->name('api.user');
+    Route::put('/user', [UserController::class, 'update'])->name('api.user.update');
+    Route::patch('/user', [UserController::class, 'update']);
     Route::get('/user/referral-code', [UserController::class, 'referralCode'])->name('api.user.referral-code');
 
     // Subscriptions

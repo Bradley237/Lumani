@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\ExamSubsystem;
 use App\Models\PastPaper;
 use App\Models\Subject;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -18,10 +19,14 @@ class PastPaperFactory extends Factory
      */
     public function definition(): array
     {
+        /** @var ExamSubsystem|null $subsystem */
+        $subsystem = fake()->randomElement([ExamSubsystem::Gce, ExamSubsystem::Obc, null]);
+        $level = $subsystem ? fake()->randomElement($subsystem->validLevels()) : null;
+
         return [
             'subject_id' => Subject::factory(),
-            'exam_subsystem' => fake()->randomElement(['anglophone', 'francophone', 'general']),
-            'level' => fake()->randomElement(['O-Level', 'A-Level', 'BEPC', 'Probatoire', 'Baccalaureat']),
+            'exam_subsystem' => $subsystem,
+            'level' => $level,
             'year' => fake()->numberBetween(2018, 2025),
             'title' => fake()->sentence(3).' Past Paper',
             'file_path' => 'papers/'.fake()->uuid().'.pdf',

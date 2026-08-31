@@ -269,17 +269,19 @@ class ChallengeService
             ->with(['subject', 'attempts' => fn ($q) => $q->where('user_id', $user->id)]);
 
         if ($user->exam_system) {
-            $query->where(function ($q) use ($user) {
+            $userSubsystem = $user->exam_system instanceof \BackedEnum ? $user->exam_system->value : (string) $user->exam_system;
+            $query->where(function ($q) use ($userSubsystem) {
                 $q->whereNull('exam_subsystem')
                     ->orWhere('exam_subsystem', 'general')
-                    ->orWhere('exam_subsystem', $user->exam_system);
+                    ->orWhere('exam_subsystem', $userSubsystem);
             });
         }
 
         if ($user->level) {
-            $query->where(function ($q) use ($user) {
+            $userLevel = $user->level instanceof \BackedEnum ? $user->level->value : (string) $user->level;
+            $query->where(function ($q) use ($userLevel) {
                 $q->whereNull('level')
-                    ->orWhere('level', $user->level);
+                    ->orWhere('level', $userLevel);
             });
         }
 

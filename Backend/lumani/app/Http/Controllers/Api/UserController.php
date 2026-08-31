@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Enums\CoinTransactionType;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\User\UpdateProfileRequest;
 use App\Models\CoinTransaction;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -29,6 +30,22 @@ class UserController extends Controller
             'referral_code' => $user->referral_code,
             'total_referrals' => $totalReferrals,
             'coins_earned_from_referrals' => $coinsEarned,
+        ]);
+    }
+
+    /**
+     * Update the authenticated user's profile details.
+     */
+    public function update(UpdateProfileRequest $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        $user->update($request->validated());
+
+        return response()->json([
+            'message' => 'Profile updated successfully.',
+            'user' => $user->fresh(),
         ]);
     }
 }

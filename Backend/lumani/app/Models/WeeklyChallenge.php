@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\ChallengeStatus;
+use App\Enums\ExamLevel;
+use App\Enums\ExamSubsystem;
 use Carbon\CarbonInterface;
 use Database\Factories\WeeklyChallengeFactory;
 use Illuminate\Database\Eloquent\Collection;
@@ -15,8 +17,8 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property int $subject_id
- * @property string|null $exam_subsystem
- * @property string|null $level
+ * @property ExamSubsystem|null $exam_subsystem
+ * @property ExamLevel|null $level
  * @property string $title
  * @property int $time_limit_minutes
  * @property CarbonInterface $week_start_date
@@ -56,6 +58,8 @@ class WeeklyChallenge extends Model
     protected function casts(): array
     {
         return [
+            'exam_subsystem' => ExamSubsystem::class,
+            'level' => ExamLevel::class,
             'subject_id' => 'integer',
             'time_limit_minutes' => 'integer',
             'week_start_date' => 'datetime',

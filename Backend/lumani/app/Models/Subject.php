@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\ExamLevel;
+use App\Enums\ExamSubsystem;
 use Database\Factories\SubjectFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +14,8 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property string $name
- * @property string|null $exam_subsystem
+ * @property ExamSubsystem|null $exam_subsystem
+ * @property ExamLevel|null $level
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -29,7 +32,21 @@ class Subject extends Model
     protected $fillable = [
         'name',
         'exam_subsystem',
+        'level',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'exam_subsystem' => ExamSubsystem::class,
+            'level' => ExamLevel::class,
+        ];
+    }
 
     /**
      * Get the chapters for the subject.

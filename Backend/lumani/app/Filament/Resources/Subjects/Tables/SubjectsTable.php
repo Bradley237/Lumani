@@ -22,6 +22,9 @@ class SubjectsTable
                 TextColumn::make('exam_subsystem')
                     ->badge()
                     ->searchable(),
+                TextColumn::make('level')
+                    ->badge()
+                    ->searchable(),
                 TextColumn::make('chapters_count')
                     ->counts('chapters')
                     ->label('Chapters')

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\ExamLevel;
+use App\Enums\ExamSubsystem;
 use Database\Factories\PastPaperFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,8 +15,8 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property int $subject_id
- * @property string|null $exam_subsystem
- * @property string|null $level
+ * @property ExamSubsystem|null $exam_subsystem
+ * @property ExamLevel|null $level
  * @property int $year
  * @property string $title
  * @property string|null $file_path
@@ -54,6 +56,8 @@ class PastPaper extends Model
     protected function casts(): array
     {
         return [
+            'exam_subsystem' => ExamSubsystem::class,
+            'level' => ExamLevel::class,
             'subject_id' => 'integer',
             'year' => 'integer',
             'coin_price' => 'integer',

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\ExamSubsystem;
 use App\Models\Subject;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -17,6 +18,10 @@ class SubjectFactory extends Factory
      */
     public function definition(): array
     {
+        /** @var ExamSubsystem|null $subsystem */
+        $subsystem = fake()->randomElement([ExamSubsystem::Gce, ExamSubsystem::Obc, null]);
+        $level = $subsystem ? fake()->randomElement([...$subsystem->validLevels(), null]) : null;
+
         return [
             'name' => fake()->randomElement([
                 'Mathematics',
@@ -30,7 +35,8 @@ class SubjectFactory extends Factory
                 'Geography',
                 'Economics',
             ]),
-            'exam_subsystem' => fake()->randomElement(['anglophone', 'francophone', null]),
+            'exam_subsystem' => $subsystem,
+            'level' => $level,
         ];
     }
 }

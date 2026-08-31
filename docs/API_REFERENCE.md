@@ -59,6 +59,9 @@ Creates a new student account, optionally credits the referrer if a referral cod
 | `preferred_language` | `string` | No | `en` or `fr` (default: `en`) | UI language preference |
 | `phone_number` | `string` | No | max: 50 | Mobile phone number |
 | `referral_code` | `string` | No | exists:users,referral_code | Valid referral code of another user |
+| `exam_system` | `string` | No | `in:gce,obc` | Educational subsystem (`gce` or `obc`) |
+| `level` | `string` | No | Valid level for `exam_system` | Academic level (`ordinary_level`, `advanced_level` for GCE; `bepc`, `probatoire`, `bac` for OBC) |
+| `exam_date` | `string` | No | date (`YYYY-MM-DD`) | Target examination date |
 
 ```json
 {
@@ -69,7 +72,10 @@ Creates a new student account, optionally credits the referrer if a referral cod
   "password_confirmation": "SecretPassword123!",
   "preferred_language": "en",
   "phone_number": "+237670000000",
-  "referral_code": "REF872A1B"
+  "referral_code": "REF872A1B",
+  "exam_system": "gce",
+  "level": "ordinary_level",
+  "exam_date": "2027-05-15"
 }
 ```
 
@@ -222,6 +228,103 @@ Retrieves the student's personal referral code, count of invited friends, and to
   "referral_code": "SAMU429B",
   "total_referrals": 3,
   "coins_earned_from_referrals": 150
+}
+```
+
+---
+
+### 1.6 Get Exam Options (Subsystem & Level Mapping)
+Retrieves the complete valid mapping of Cameroon secondary education exam subsystems (`gce`, `obc`) to their allowed academic levels, allowing frontend clients to render dynamic cascading dropdowns without hardcoding pairings.
+
+- **Method**: `GET`
+- **URL**: `/api/exam-options`
+- **Route Name**: `api.exam-options`
+- **Auth**: Public
+- **Gating**: None
+
+#### Response Body (`200 OK`)
+```json
+{
+  "gce": [
+    "ordinary_level",
+    "advanced_level"
+  ],
+  "obc": [
+    "bepc",
+    "probatoire",
+    "bac"
+  ]
+}
+```
+
+---
+
+### 1.7 Update Authenticated User Profile
+Updates the authenticated student's personal details, UI language, exam subsystem, academic level, or target exam date. Rejects any invalid or mismatched subsystem + level combination with `422 Unprocessable Entity`.
+
+- **Method**: `PUT` or `PATCH`
+- **URL**: `/api/user`
+- **Route Name**: `api.user.update`
+- **Auth**: Required (Sanctum)
+- **Gating**: None
+
+#### Request Body
+| Field | Type | Required | Rules | Description |
+|---|---|---|---|---|
+| `first_name` | `string` | No | string, max: 255 | Student first name |
+| `last_name` | `string` | No | string, max: 255 | Student last name |
+| `preferred_language` | `string` | No | `in:en,fr` | Language code |
+| `phone_number` | `string` | No | max: 50 | Mobile phone number |
+| `exam_system` | `string` | No | `in:gce,obc` | Educational subsystem |
+| `level` | `string` | No | Valid level for chosen `exam_system` | Academic level |
+| `exam_date` | `string` | No | date (`YYYY-MM-DD`) | Target examination date |
+
+```json
+{
+  "first_name": "Samuel",
+  "last_name": "Eto'o Fils",
+  "preferred_language": "fr",
+  "exam_system": "obc",
+  "level": "bac",
+  "exam_date": "2027-06-20"
+}
+```
+
+#### Response Body (`200 OK`)
+```json
+{
+  "message": "Profile updated successfully.",
+  "user": {
+    "id": 42,
+    "first_name": "Samuel",
+    "last_name": "Eto'o Fils",
+    "email": "samuel@example.com",
+    "role": "student",
+    "preferred_language": "fr",
+    "phone_number": "+237670000000",
+    "coin_balance": 25,
+    "experience_points": 1250,
+    "xp_converted_total": 0,
+    "day_streak": 4,
+    "exam_system": "obc",
+    "level": "bac",
+    "exam_date": "2027-06-20",
+    "referral_code": "SAMU429B",
+    "created_at": "2026-08-30T10:00:00.000000Z",
+    "updated_at": "2026-08-31T21:00:00.000000Z"
+  }
+}
+```
+
+#### Error Response (`422 Unprocessable Entity`)
+```json
+{
+  "message": "The selected level 'bac' is not valid for the 'gce' exam subsystem.",
+  "errors": {
+    "level": [
+      "The selected level 'bac' is not valid for the 'gce' exam subsystem."
+    ]
+  }
 }
 ```
 

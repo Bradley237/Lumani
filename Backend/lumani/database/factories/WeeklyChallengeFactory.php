@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\ChallengeStatus;
+use App\Enums\ExamSubsystem;
 use App\Models\Subject;
 use App\Models\User;
 use App\Models\WeeklyChallenge;
@@ -20,10 +21,14 @@ class WeeklyChallengeFactory extends Factory
      */
     public function definition(): array
     {
+        /** @var ExamSubsystem|null $subsystem */
+        $subsystem = fake()->randomElement([ExamSubsystem::Gce, ExamSubsystem::Obc, null]);
+        $level = $subsystem ? fake()->randomElement($subsystem->validLevels()) : null;
+
         return [
             'subject_id' => Subject::factory(),
-            'exam_subsystem' => fake()->randomElement(['anglophone', 'francophone', 'general']),
-            'level' => fake()->randomElement(['O-Level', 'A-Level', 'BEPC', 'Probatoire', 'Baccalaureat']),
+            'exam_subsystem' => $subsystem,
+            'level' => $level,
             'title' => 'Weekly Challenge: '.fake()->sentence(3),
             'time_limit_minutes' => 30,
             'week_start_date' => now()->startOfWeek(),

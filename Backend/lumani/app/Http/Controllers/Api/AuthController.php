@@ -40,6 +40,9 @@ class AuthController extends Controller
             'experience_points' => 0,
             'xp_converted_total' => 0,
             'day_streak' => 0,
+            'exam_system' => $validated['exam_system'] ?? null,
+            'level' => $validated['level'] ?? null,
+            'exam_date' => $validated['exam_date'] ?? null,
         ]);
 
         if (! empty($validated['referral_code'])) {

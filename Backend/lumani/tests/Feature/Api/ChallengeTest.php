@@ -27,7 +27,7 @@ test('student can list published challenges and sees attempt status', function (
 
     $challenge = WeeklyChallenge::factory()->create([
         'subject_id' => $subject->id,
-        'exam_subsystem' => 'general',
+        'exam_subsystem' => null,
         'level' => null,
         'status' => ChallengeStatus::Published,
         'week_start_date' => now()->subDay(),
