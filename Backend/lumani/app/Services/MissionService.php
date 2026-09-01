@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Enums\AdRewardStatus;
 use App\Enums\CoinTransactionType;
 use App\Enums\MissionType;
+use App\Models\AdRewardRequest;
+use App\Models\BusinessSetting;
 use App\Models\CoinTransaction;
 use App\Models\DailyCheckinReward;
 use App\Models\Mission;
@@ -57,26 +60,28 @@ class MissionService
         $now = now();
         $streakDay = 1;
 
+        $checkinResetHours = (int) BusinessSetting::get('checkin_reset_hours', 20);
+
         if ($progress->last_completed_at !== null) {
             $lastCompleted = Carbon::parse($progress->last_completed_at);
             $secondsSince = $lastCompleted->diffInSeconds($now);
 
-            $twentyHours = 20 * 3600;
-            $fortyHours = 40 * 3600;
+            $resetSeconds = $checkinResetHours * 3600;
+            $skipSeconds = ($checkinResetHours * 2) * 3600;
 
-            if ($secondsSince < $twentyHours) {
-                $nextAvailable = $lastCompleted->copy()->addHours(20);
+            if ($secondsSince < $resetSeconds) {
+                $nextAvailable = $lastCompleted->copy()->addHours($checkinResetHours);
 
                 throw ValidationException::withMessages([
-                    'checkin' => "You have already checked in within the last 20 hours. Next check-in available at {$nextAvailable->toIso8601String()}.",
+                    'checkin' => "You have already checked in within the last {$checkinResetHours} hours. Next check-in available at {$nextAvailable->toIso8601String()}.",
                 ]);
             }
 
-            if ($secondsSince > $fortyHours) {
+            if ($secondsSince > $skipSeconds) {
                 // Skipped a day -> reset to Day 1
                 $streakDay = 1;
             } else {
-                // Within 20h - 40h window -> streak increments
+                // Within reset window -> streak increments
                 $currentStreak = $progress->current_streak_day ?? 0;
                 $streakDay = ($currentStreak % 7) + 1;
             }
@@ -101,7 +106,7 @@ class MissionService
             'message' => "Day {$streakDay} check-in completed successfully.",
             'streak_day' => $streakDay,
             'coins_earned' => $coinReward,
-            'next_checkin_at' => $now->copy()->addHours(20)->toIso8601String(),
+            'next_checkin_at' => $now->copy()->addHours($checkinResetHours)->toIso8601String(),
             'coin_balance' => $this->coinService->getBalance($user),
         ];
     }
@@ -244,10 +249,10 @@ class MissionService
         $newUser->referred_by_user_id = $referrer->id;
         $newUser->save();
 
-        // Check strict 24-hour cap for referrer (max 1 referral reward per rolling 24 hours)
+        $referralCapHours = (int) BusinessSetting::get('referral_cap_hours', 24);
         $recentReferralRewards = CoinTransaction::where('user_id', $referrer->id)
             ->where('type', CoinTransactionType::EarnedReferral)
-            ->where('created_at', '>=', now()->subHours(24))
+            ->where('created_at', '>=', now()->subHours($referralCapHours))
             ->count();
 
         if ($recentReferralRewards < 1) {
@@ -261,7 +266,7 @@ class MissionService
     }
 
     /**
-     * Convert available XP to coins (1,500 XP = 50 coins).
+     * Convert available XP to coins.
      *
      * @return array{
      *     message: string,
@@ -279,17 +284,20 @@ class MissionService
             /** @var User $lockedUser */
             $lockedUser = User::where('id', $user->id)->lockForUpdate()->firstOrFail();
 
+            $xpThreshold = (int) BusinessSetting::get('xp_to_coins_ratio_xp', 1500);
+            $coinsPerChunk = (int) BusinessSetting::get('xp_to_coins_ratio_coins', 50);
+
             $availableXp = max(0, $lockedUser->experience_points - $lockedUser->xp_converted_total);
-            $chunks = intdiv($availableXp, 1500);
+            $chunks = $xpThreshold > 0 ? intdiv($availableXp, $xpThreshold) : 0;
 
             if ($chunks < 1) {
                 throw ValidationException::withMessages([
-                    'xp' => 'You need at least 1,500 unconverted XP to convert to coins.',
+                    'xp' => "You need at least {$xpThreshold} unconverted XP to convert to coins.",
                 ]);
             }
 
-            $xpToConvert = $chunks * 1500;
-            $coinsEarned = $chunks * 50;
+            $xpToConvert = $chunks * $xpThreshold;
+            $coinsEarned = $chunks * $coinsPerChunk;
 
             $lockedUser->xp_converted_total += $xpToConvert;
             $lockedUser->save();
@@ -331,18 +339,36 @@ class MissionService
 
         $adMission = $missions->firstWhere('key', 'watch_ad');
         $adsWatchedIn20h = 0;
+        $watchAdResetHours = (int) BusinessSetting::get('watch_ad_reset_hours', 20);
+        $watchAdDailyCap = (int) BusinessSetting::get('watch_ad_daily_cap', 5);
+
         if ($adMission) {
-            $adsWatchedIn20h = CoinTransaction::where('user_id', $user->id)
+            $windowStart = now()->subHours($watchAdResetHours);
+            $redeemedRequests = AdRewardRequest::where('user_id', $user->id)
+                ->where('status', AdRewardStatus::Redeemed)
+                ->where(function ($query) use ($windowStart) {
+                    $query->where('redeemed_at', '>=', $windowStart)
+                        ->orWhere(function ($sub) use ($windowStart) {
+                            $sub->whereNull('redeemed_at')
+                                ->where('created_at', '>=', $windowStart);
+                        });
+                })
+                ->count();
+
+            $legacyCount = CoinTransaction::where('user_id', $user->id)
                 ->where('type', CoinTransactionType::EarnedMission)
                 ->where('reference_type', $adMission->getMorphClass())
                 ->where('reference_id', $adMission->id)
-                ->where('created_at', '>=', now()->subHours(20))
+                ->where('created_at', '>=', $windowStart)
                 ->count();
+
+            $adsWatchedIn20h = $redeemedRequests + $legacyCount;
         }
 
         $now = now();
+        $checkinResetHours = (int) BusinessSetting::get('checkin_reset_hours', 20);
 
-        $missionData = $missions->map(function (Mission $mission) use ($userProgress, $adsWatchedIn20h, $now, $user): array {
+        $missionData = $missions->map(function (Mission $mission) use ($userProgress, $adsWatchedIn20h, $now, $user, $checkinResetHours, $watchAdDailyCap): array {
             /** @var UserMissionProgress|null $prog */
             $prog = $userProgress->get($mission->id);
 
@@ -364,9 +390,9 @@ class MissionService
 
                 if ($prog && $prog->last_completed_at) {
                     $last = Carbon::parse($prog->last_completed_at);
-                    if ($last->diffInSeconds($now) < 20 * 3600) {
+                    if ($last->diffInSeconds($now) < $checkinResetHours * 3600) {
                         $canCheckin = false;
-                        $nextCheckinAt = $last->copy()->addHours(20)->toIso8601String();
+                        $nextCheckinAt = $last->copy()->addHours($checkinResetHours)->toIso8601String();
                     }
                 }
 
@@ -375,8 +401,8 @@ class MissionService
                 $data['next_checkin_at'] = $nextCheckinAt;
             } elseif ($mission->type === MissionType::WatchAd) {
                 $data['ads_watched_in_window'] = $adsWatchedIn20h;
-                $data['remaining_ads'] = max(0, 5 - $adsWatchedIn20h);
-                $data['can_watch_ad'] = $adsWatchedIn20h < 5;
+                $data['remaining_ads'] = max(0, $watchAdDailyCap - $adsWatchedIn20h);
+                $data['can_watch_ad'] = $adsWatchedIn20h < $watchAdDailyCap;
             } elseif ($mission->type === MissionType::Referral) {
                 $data['referral_code'] = $user->referral_code;
                 $data['total_referrals'] = $user->referrals()->count();

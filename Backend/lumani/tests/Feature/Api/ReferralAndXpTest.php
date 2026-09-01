@@ -185,8 +185,9 @@ test('coin balance always equals sum of all coin transactions for user', functio
     // 1. Daily check-in (+3)
     $this->actingAs($user, 'sanctum')->postJson('/api/missions/checkin')->assertOk();
 
-    // 2. Watch ad (+5)
-    $this->actingAs($user, 'sanctum')->postJson('/api/missions/watch-ad')->assertOk();
+    // 2. Watch ad (+5 via AdMob SSV request-token + dev simulation)
+    $this->actingAs($user, 'sanctum')->postJson('/api/ads/request-token')->assertOk();
+    $this->actingAs($user, 'sanctum')->postJson('/api/ads/dev-simulate-reward')->assertOk();
 
     // 3. Complete profile (+30)
     $this->actingAs($user, 'sanctum')->postJson('/api/missions/complete/complete_profile')->assertOk();

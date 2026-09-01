@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\CoinTransactionType;
+use App\Models\BusinessSetting;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -46,14 +47,17 @@ class XpService
             $lockedUser->experience_points += $amount;
             $lockedUser->save();
 
-            // Check if user crossed one or more 1,500 XP conversion thresholds (1,500 XP = 50 coins)
+            // Check if user crossed one or more XP conversion thresholds
+            $xpRatioThreshold = (int) BusinessSetting::get('xp_to_coins_ratio_xp', 1500);
+            $coinsRatioReward = (int) BusinessSetting::get('xp_to_coins_ratio_coins', 50);
+
             $availableXp = max(0, $lockedUser->experience_points - $lockedUser->xp_converted_total);
-            $chunks = intdiv($availableXp, 1500);
+            $chunks = $xpRatioThreshold > 0 ? intdiv($availableXp, $xpRatioThreshold) : 0;
             $coinsEarned = 0;
 
             if ($chunks > 0) {
-                $xpToConvert = $chunks * 1500;
-                $coinsEarned = $chunks * 50;
+                $xpToConvert = $chunks * $xpRatioThreshold;
+                $coinsEarned = $chunks * $coinsRatioReward;
 
                 $lockedUser->xp_converted_total += $xpToConvert;
                 $lockedUser->save();

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\ChapterProgressState;
 use App\Models\AppSetting;
+use App\Models\BusinessSetting;
 use App\Models\Chapter;
 use App\Models\ChapterProgress;
 use App\Models\Question;
@@ -150,8 +151,10 @@ class QuizService
 
             $scorePercent = $totalQuestions > 0 ? round(($correctCount / $totalQuestions) * 100, 2) : 0.0;
 
-            // 10 XP per correct answer + flat 20 XP completion bonus
-            $quizXp = ($correctCount * 10) + 20;
+            // XP per correct answer + completion bonus
+            $xpPerCorrect = (int) BusinessSetting::get('quiz_xp_per_correct_answer', 10);
+            $completionBonus = (int) BusinessSetting::get('quiz_xp_completion_bonus', 20);
+            $quizXp = ($correctCount * $xpPerCorrect) + $completionBonus;
 
             // Check if this is the first time the chapter reaches completed state
             /** @var ChapterProgress|null $existingProgress */

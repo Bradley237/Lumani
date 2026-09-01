@@ -6,6 +6,7 @@ use App\Enums\ChallengeAttemptStatus;
 use App\Enums\ChallengeQuestionType;
 use App\Enums\ChallengeStatus;
 use App\Enums\CoinTransactionType;
+use App\Models\BusinessSetting;
 use App\Models\User;
 use App\Models\UserChallengeAnswer;
 use App\Models\UserChallengeAttempt;
@@ -243,12 +244,17 @@ class ChallengeService
      */
     public function calculateCoinsForScore(float $scorePercent): int
     {
-        if ($scorePercent >= 95.0) {
-            return 100;
+        $highThreshold = (float) BusinessSetting::get('challenge_reward_high_threshold_percent', 95.0);
+        $highCoins = (int) BusinessSetting::get('challenge_reward_high_coins', 100);
+        $midThreshold = (float) BusinessSetting::get('challenge_reward_mid_threshold_percent', 70.0);
+        $midCoins = (int) BusinessSetting::get('challenge_reward_mid_coins', 50);
+
+        if ($scorePercent >= $highThreshold) {
+            return $highCoins;
         }
 
-        if ($scorePercent >= 70.0) {
-            return 50;
+        if ($scorePercent >= $midThreshold) {
+            return $midCoins;
         }
 
         return 0;

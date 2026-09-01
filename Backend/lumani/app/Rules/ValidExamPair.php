@@ -4,9 +4,11 @@ namespace App\Rules;
 
 use App\Enums\ExamLevel;
 use App\Enums\ExamSubsystem;
+use App\Models\User;
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Translation\PotentiallyTranslatedString;
 
 class ValidExamPair implements DataAwareRule, ValidationRule
@@ -54,8 +56,9 @@ class ValidExamPair implements DataAwareRule, ValidationRule
         $subsystemRaw = $this->data[$this->subsystemField] ?? ($this->data['exam_subsystem'] ?? null);
 
         // If not in payload, check if user is authenticated and has exam_system
-        if (blank($subsystemRaw) && auth()->check()) {
-            $user = auth()->user();
+        if (blank($subsystemRaw) && Auth::check()) {
+            /** @var User|null $user */
+            $user = Auth::user();
             $subsystemRaw = $user?->exam_system instanceof ExamSubsystem
                 ? $user->exam_system->value
                 : $user?->exam_system;

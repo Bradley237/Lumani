@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\ExamSessionStatus;
 use App\Enums\PastPaperQuestionType;
+use App\Models\BusinessSetting;
 use App\Models\ExamSession;
 use App\Models\ExamSessionAnswer;
 use App\Models\PastPaper;
@@ -43,12 +44,12 @@ class ExamSessionService
         $hasStructural = $questions->contains(fn (PastPaperQuestion $q) => $q->type === PastPaperQuestionType::Structural);
 
         if ($hasMcq && ! $hasStructural) {
-            $maxAllowedMinutes = 90;
+            $maxAllowedMinutes = (int) BusinessSetting::get('exam_time_cap_mcq_minutes', 90);
         } elseif (! $hasMcq && $hasStructural) {
-            $maxAllowedMinutes = 180;
+            $maxAllowedMinutes = (int) BusinessSetting::get('exam_time_cap_structural_minutes', 180);
         } else {
-            // Mixed (or empty) defaults to 240
-            $maxAllowedMinutes = 240;
+            // Mixed (or empty) defaults to mixed setting
+            $maxAllowedMinutes = (int) BusinessSetting::get('exam_time_cap_mixed_minutes', 240);
         }
 
         // 3. Validate requested minutes

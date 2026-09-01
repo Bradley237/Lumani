@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\ExamSubsystem;
 use App\Models\Subject;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -37,7 +38,7 @@ class PopularSubjectsWidget extends TableWidget
                 TextColumn::make('exam_subsystem')
                     ->label('Subsystem')
                     ->badge()
-                    ->color(fn (?string $state): string => match ($state) {
+                    ->color(fn ($state): string => match ($state instanceof ExamSubsystem ? $state->value : (string) $state) {
                         'general' => 'info',
                         'technical' => 'warning',
                         default => 'gray',

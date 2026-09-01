@@ -40,4 +40,8 @@ return [
         'model' => env('GEMINI_MODEL', 'gemini-3.5-flash'),
     ],
 
+    'admob' => [
+        'ssv_enabled' => (bool) env('ADMOB_SSV_ENABLED', false),
+    ],
+
 ];

@@ -144,22 +144,28 @@ test('watch ad awards 5 coins per call and caps at 5 per rolling 20-hour window'
 
     Carbon::setTestNow(now());
 
-    // Watch 5 ads
+    // Watch 5 ads via request-token + dev simulation
     for ($i = 1; $i <= 5; $i++) {
-        $response = $this->actingAs($user, 'sanctum')->postJson('/api/missions/watch-ad');
-        $response->assertOk()
+        $tokenRes = $this->actingAs($user, 'sanctum')->postJson('/api/ads/request-token');
+        $tokenRes->assertOk()
+            ->assertJsonStructure(['token', 'status', 'remaining_ads', 'expires_at'])
+            ->assertJson([
+                'status' => 'pending',
+                'remaining_ads' => 5 - $i,
+            ]);
+
+        $simRes = $this->actingAs($user, 'sanctum')->postJson('/api/ads/dev-simulate-reward');
+        $simRes->assertOk()
             ->assertJson([
                 'coins_earned' => 5,
-                'ads_watched_in_window' => $i,
-                'remaining_ads' => 5 - $i,
                 'coin_balance' => $i * 5,
             ]);
     }
 
     expect($user->fresh()->coin_balance)->toBe(25);
 
-    // 6th ad within 20h window is rejected
-    $response6 = $this->actingAs($user, 'sanctum')->postJson('/api/missions/watch-ad');
+    // 6th ad token request within 20h window is rejected
+    $response6 = $this->actingAs($user, 'sanctum')->postJson('/api/ads/request-token');
     $response6->assertStatus(422)
         ->assertJsonValidationErrors(['ad']);
 
@@ -167,14 +173,13 @@ test('watch ad awards 5 coins per call and caps at 5 per rolling 20-hour window'
 
     // Advance time by 21 hours (rolling window clears old ads)
     Carbon::setTestNow(now()->addHours(21));
-    $response7 = $this->actingAs($user, 'sanctum')->postJson('/api/missions/watch-ad');
+    $response7 = $this->actingAs($user, 'sanctum')->postJson('/api/ads/request-token');
     $response7->assertOk()
         ->assertJson([
-            'coins_earned' => 5,
-            'ads_watched_in_window' => 1,
             'remaining_ads' => 4,
-            'coin_balance' => 30,
         ]);
+
+    $this->actingAs($user, 'sanctum')->postJson('/api/ads/dev-simulate-reward')->assertOk();
 
     expect($user->fresh()->coin_balance)->toBe(30);
 });

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdRewardController;
 use App\Http\Controllers\Api\AiTutorController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CareerPathwayController;
@@ -34,6 +35,7 @@ Route::post('/register', [AuthController::class, 'register'])->middleware('throt
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth')->name('api.login');
 Route::get('/exam-options', [ExamOptionController::class, 'index'])->name('api.exam-options');
 Route::post('/payments/callback', [PaymentController::class, 'callback'])->name('api.payments.callback');
+Route::get('/ads/reward-callback', [AdRewardController::class, 'rewardCallback'])->name('api.ads.reward-callback');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
@@ -47,10 +49,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/subscriptions/purchase', [SubscriptionController::class, 'purchase'])->name('api.subscriptions.purchase');
     Route::post('/subscription/purchase', [SubscriptionController::class, 'purchase'])->name('api.subscription.purchase');
 
+    // Ads & SSV
+    Route::post('/ads/request-token', [AdRewardController::class, 'requestToken'])->name('api.ads.request-token');
+
+    if (! config('admob.ssv_enabled') && app()->environment('local', 'testing')) {
+        Route::post('/ads/dev-simulate-reward', [AdRewardController::class, 'devSimulate'])->name('api.ads.dev-simulate-reward');
+    }
+
     // Missions
     Route::get('/missions', [MissionController::class, 'index'])->name('api.missions.index');
     Route::post('/missions/checkin', [MissionController::class, 'checkin'])->name('api.missions.checkin');
-    Route::post('/missions/watch-ad', [MissionController::class, 'watchAd'])->middleware('throttle:watch-ad')->name('api.missions.watch-ad');
     Route::post('/missions/complete/{missionKey}', [MissionController::class, 'complete'])->name('api.missions.complete');
 
     // XP Conversion
