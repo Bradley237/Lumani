@@ -51,7 +51,13 @@ abstract final class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
-        titleTextStyle: AppTextStyles.titleLarge,
+        titleTextStyle: TextStyle(
+          fontFamily: AppTextStyles.fontFamily,
+          fontSize: 20.0,
+          fontWeight: FontWeight.w600,
+          height: 1.35,
+          color: AppColors.textPrimaryLight,
+        ),
         iconTheme: IconThemeData(
           color: AppColors.textPrimaryLight,
           size: AppDimensions.iconLg,
@@ -210,7 +216,13 @@ abstract final class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
-        titleTextStyle: AppTextStyles.titleLarge,
+        titleTextStyle: TextStyle(
+          fontFamily: AppTextStyles.fontFamily,
+          fontSize: 20.0,
+          fontWeight: FontWeight.w600,
+          height: 1.35,
+          color: AppColors.textPrimaryDark,
+        ),
         iconTheme: IconThemeData(
           color: AppColors.textPrimaryDark,
           size: AppDimensions.iconLg,

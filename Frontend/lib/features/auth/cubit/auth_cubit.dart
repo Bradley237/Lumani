@@ -23,8 +23,20 @@ class AuthCubit extends Cubit<AuthState> {
       final token = (await apiClient.getToken()) ?? '';
 
       emit(Authenticated(user: Map<String, dynamic>.from(user), token: token));
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
+      if (statusCode == 401) {
+        // Token is explicitly rejected by the server — clear it.
+        await apiClient.clearToken();
+        emit(Unauthenticated());
+      } else {
+        // Network failure, timeout, 500, etc. — token is still valid.
+        // Do NOT clear it. Emit unauthenticated so the splash router
+        // redirects to auth, but the token remains for the next launch.
+        emit(Unauthenticated());
+      }
     } catch (e) {
-      await apiClient.clearToken();
+      // Non-Dio error (very unlikely). Preserve token, redirect to auth.
       emit(Unauthenticated());
     }
   }
@@ -107,6 +119,17 @@ class AuthCubit extends Cubit<AuthState> {
       // Ignore network errors during logout
     } finally {
       await apiClient.clearToken();
+      emit(Unauthenticated());
+    }
+  }
+
+  /// Emits [Unauthenticated] in response to a global HTTP 401 detected by
+  /// the Dio interceptor in [ApiClient].
+  ///
+  /// The interceptor already cleared the token before calling this.
+  /// This method must only be called from [ApiClient.onUnauthenticated].
+  void forceUnauthenticated() {
+    if (state is! Unauthenticated) {
       emit(Unauthenticated());
     }
   }

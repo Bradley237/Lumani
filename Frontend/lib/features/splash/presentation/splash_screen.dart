@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
       context.go('/auth');
     } else if (authState is Authenticated) {
       final userExamSystem = authState.user['exam_system'];
-      if (userExamSystem == 'anglophone' || userExamSystem == 'francophone') {
+      if (userExamSystem == 'gce' || userExamSystem == 'obc') {
         context.go('/home');
       } else if (subsystemState.subsystem != Subsystem.none) {
         context.go('/home');

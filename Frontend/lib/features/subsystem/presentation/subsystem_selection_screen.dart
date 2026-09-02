@@ -54,8 +54,7 @@ class SubsystemSelectionScreen extends StatelessWidget {
                     subtitle: 'General Certificate of Education (Ordinary & Advanced Level)',
                     icon: Icons.menu_book_rounded,
                     badgeText: 'English Academic Content',
-                    onTap: () =>
-                        _selectSubsystem(context, Subsystem.anglophone),
+                    onTap: () => _selectSubsystem(context, Subsystem.gce),
                   ),
                   const SizedBox(height: AppDimensions.space16),
                   _SubsystemCard(
@@ -63,8 +62,7 @@ class SubsystemSelectionScreen extends StatelessWidget {
                     subtitle: 'Office du Baccalauréat du Cameroun (BEPC, Probatoire, Baccalauréat)',
                     icon: Icons.school_rounded,
                     badgeText: 'Contenu Académique Français',
-                    onTap: () =>
-                        _selectSubsystem(context, Subsystem.francophone),
+                    onTap: () => _selectSubsystem(context, Subsystem.obc),
                   ),
                 ],
               ),

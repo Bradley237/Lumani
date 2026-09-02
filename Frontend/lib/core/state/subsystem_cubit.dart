@@ -1,10 +1,33 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Lumani academic subsystem identifiers.
+///
+/// These values match the backend [ExamSubsystem] enum exactly:
+///   gce  → Anglophone / GCE (O-Level, A-Level)
+///   obc  → Francophone / OBC (BEPC, Probatoire, Baccalauréat)
+///
+/// The UI may display friendly labels such as "GCE" or "OBC", but the
+/// internal enum name and the persisted/API value must be 'gce' or 'obc'.
 enum Subsystem {
   none,
-  anglophone, // GCE System
-  francophone, // OBC System
+  gce, // Anglophone — General Certificate of Education
+  obc, // Francophone — Office du Baccalauréat du Cameroun
+}
+
+extension SubsystemApiValue on Subsystem {
+  /// Returns the API/persistence string expected by the backend.
+  String get apiValue => switch (this) {
+    Subsystem.gce => 'gce',
+    Subsystem.obc => 'obc',
+    Subsystem.none => 'none',
+  };
+
+  static Subsystem fromApiValue(String? value) => switch (value) {
+    'gce' => Subsystem.gce,
+    'obc' => Subsystem.obc,
+    _ => Subsystem.none,
+  };
 }
 
 class SubsystemState {
@@ -31,27 +54,13 @@ class SubsystemCubit extends Cubit<SubsystemState> {
   Future<void> _initSubsystem() async {
     final prefs = await SharedPreferences.getInstance();
     final savedVal = prefs.getString(_subsystemKey);
-    if (savedVal == 'anglophone') {
-      emit(
-        state.copyWith(subsystem: Subsystem.anglophone, isInitialized: true),
-      );
-    } else if (savedVal == 'francophone') {
-      emit(
-        state.copyWith(subsystem: Subsystem.francophone, isInitialized: true),
-      );
-    } else {
-      emit(state.copyWith(subsystem: Subsystem.none, isInitialized: true));
-    }
+    final subsystem = SubsystemApiValue.fromApiValue(savedVal);
+    emit(state.copyWith(subsystem: subsystem, isInitialized: true));
   }
 
   Future<void> setSubsystem(Subsystem newSubsystem) async {
     final prefs = await SharedPreferences.getInstance();
-    final strVal = newSubsystem == Subsystem.anglophone
-        ? 'anglophone'
-        : newSubsystem == Subsystem.francophone
-        ? 'francophone'
-        : 'none';
-    await prefs.setString(_subsystemKey, strVal);
+    await prefs.setString(_subsystemKey, newSubsystem.apiValue);
     emit(state.copyWith(subsystem: newSubsystem));
   }
 }

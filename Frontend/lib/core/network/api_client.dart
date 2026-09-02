@@ -12,18 +12,58 @@ class ApiException implements Exception {
   String toString() => 'ApiException: $message (StatusCode: $statusCode)';
 }
 
+/// Callback invoked by [ApiClient] when the server returns HTTP 401.
+///
+/// The implementor is responsible for clearing auth state and redirecting
+/// the user to the authentication flow. This decouples [ApiClient] from
+/// [AuthCubit] and avoids circular dependency.
+typedef OnUnauthenticated = void Function();
+
+/// The single authoritative API configuration for Lumani.
+///
+/// ## Selecting an API Environment
+///
+/// The base URL is injected at build time via `--dart-define`:
+///
+///   Android Emulator (default):
+///     flutter run
+///     (defaults to http://10.0.2.2:8000/api)
+///
+///   iOS Simulator:
+///     flutter run --dart-define=API_BASE_URL=http://localhost:8000/api
+///
+///   Physical device (replace with your machine's LAN IP):
+///     flutter run --dart-define=API_BASE_URL=http://192.168.1.10:8000/api
+///
+///   Production:
+///     flutter build apk --dart-define=API_BASE_URL=https://api.lumani.cm/api
+///
+/// There is ONE place where this is defined: this file.
+/// Do not hardcode any URL in feature code.
+abstract final class ApiConfig {
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://10.0.2.2:8000/api',
+  );
+}
+
 class ApiClient {
   static const String tokenKey = 'sanctum_auth_token';
-  static const String defaultBaseUrl = 'http://10.0.2.2:8000/api';
 
   late final Dio dio;
   final FlutterSecureStorage secureStorage;
 
-  ApiClient({String baseUrl = defaultBaseUrl, FlutterSecureStorage? storage})
+  /// Called when the API returns HTTP 401 (authentication expired/invalid).
+  ///
+  /// Assign this after construction to avoid circular dependencies.
+  /// Must NOT be called for 403, 422, network errors, or timeouts.
+  OnUnauthenticated? onUnauthenticated;
+
+  ApiClient({String? baseUrl, FlutterSecureStorage? storage})
     : secureStorage = storage ?? const FlutterSecureStorage() {
     dio = Dio(
       BaseOptions(
-        baseUrl: baseUrl,
+        baseUrl: baseUrl ?? ApiConfig.baseUrl,
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
         headers: {
@@ -42,9 +82,17 @@ class ApiClient {
           }
           return handler.next(options);
         },
-        onError: (DioException error, handler) {
+        onError: (DioException error, handler) async {
           final statusCode = error.response?.statusCode;
           final responseData = error.response?.data;
+
+          // HTTP 401: authentication is no longer valid.
+          // Clear the stored token and notify the auth layer.
+          // Do NOT treat any other status code this way.
+          if (statusCode == 401) {
+            await clearToken();
+            onUnauthenticated?.call();
+          }
 
           String message = 'An unexpected error occurred.';
           Map<String, dynamic>? errors;

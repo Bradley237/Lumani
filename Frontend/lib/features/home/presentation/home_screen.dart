@@ -89,9 +89,9 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: AppDimensions.space8),
               BlocBuilder<SubsystemCubit, SubsystemState>(
                 builder: (context, state) {
-                  final title = state.subsystem == Subsystem.anglophone
+                  final title = state.subsystem == Subsystem.gce
                       ? 'Anglophone (GCE Curriculum)'
-                      : state.subsystem == Subsystem.francophone
+                      : state.subsystem == Subsystem.obc
                       ? 'Francophone (OBC Curriculum)'
                       : 'Not Selected';
 

@@ -10,15 +10,31 @@ import 'features/auth/cubit/auth_cubit.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  final apiClient = ApiClient();
 
-  runApp(LumaniApp(apiClient: apiClient));
+  // ApiClient is created first. The onUnauthenticated callback is wired
+  // after AuthCubit is created, avoiding a circular dependency.
+  final apiClient = ApiClient();
+  final authCubit = AuthCubit(apiClient: apiClient);
+
+  // Global 401 handler: when the server explicitly rejects the token,
+  // notify AuthCubit. This does NOT fire on network errors, timeouts,
+  // 403, 422, or any other status code.
+  apiClient.onUnauthenticated = () {
+    authCubit.forceUnauthenticated();
+  };
+
+  runApp(LumaniApp(apiClient: apiClient, authCubit: authCubit));
 }
 
 class LumaniApp extends StatelessWidget {
   final ApiClient apiClient;
+  final AuthCubit authCubit;
 
-  const LumaniApp({super.key, required this.apiClient});
+  const LumaniApp({
+    super.key,
+    required this.apiClient,
+    required this.authCubit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +42,7 @@ class LumaniApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => LocaleCubit()),
         BlocProvider(create: (_) => SubsystemCubit()),
-        BlocProvider(create: (_) => AuthCubit(apiClient: apiClient)),
+        BlocProvider.value(value: authCubit),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {
@@ -37,7 +53,7 @@ class LumaniApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             locale: locale,
-            routerConfig: AppRouter.router,
+            routerConfig: AppRouter.createRouter(authCubit),
           );
         },
       ),
