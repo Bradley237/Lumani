@@ -16,7 +16,9 @@ class ManageBusinessSettings extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAdjustmentsHorizontal;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Settings';
+    protected static string|UnitEnum|null $navigationGroup = 'Economy';
+
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $title = 'Business Settings';
 

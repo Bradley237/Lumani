@@ -21,6 +21,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $marking_scheme
  * @property int $max_points
  * @property int $order
+ * @property string|null $image_path
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read PastPaper $pastPaper
@@ -43,6 +44,7 @@ class PastPaperQuestion extends Model
         'marking_scheme',
         'max_points',
         'order',
+        'image_path',
     ];
 
     /**

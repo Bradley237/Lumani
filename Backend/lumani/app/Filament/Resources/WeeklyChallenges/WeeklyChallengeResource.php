@@ -21,7 +21,9 @@ class WeeklyChallengeResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTrophy;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Gamification';
+    protected static string|UnitEnum|null $navigationGroup = 'Engagement';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {

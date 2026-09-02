@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Mail;
  * @property array<string, mixed>|list<mixed> $answer_choices
  * @property string $correct_choice
  * @property string|null $explanation
+ * @property string|null $image_path
  * @property ReviewStatus $review_status
  * @property int|null $reviewed_by
  * @property string|null $review_notes
@@ -46,6 +47,7 @@ class SubmittedQuestion extends Model
         'answer_choices',
         'correct_choice',
         'explanation',
+        'image_path',
         'review_status',
         'reviewed_by',
         'review_notes',

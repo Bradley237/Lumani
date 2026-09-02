@@ -21,7 +21,9 @@ class DailyCheckinRewardResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Gamification';
+    protected static string|UnitEnum|null $navigationGroup = 'Economy';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {

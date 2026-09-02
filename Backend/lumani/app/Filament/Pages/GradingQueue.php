@@ -21,9 +21,11 @@ use UnitEnum;
 
 class GradingQueue extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Gamification';
+    protected static string|UnitEnum|null $navigationGroup = 'Engagement';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $title = 'Grading Queue';
 

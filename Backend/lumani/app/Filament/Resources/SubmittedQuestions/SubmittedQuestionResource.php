@@ -13,12 +13,17 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class SubmittedQuestionResource extends Resource
 {
     protected static ?string $model = SubmittedQuestion::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFlag;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Moderation';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationLabel = 'Submitted Questions';
 

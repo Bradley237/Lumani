@@ -12,6 +12,7 @@ use App\Models\PastPaperQuestion;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 
@@ -84,6 +85,7 @@ class ExamSessionService
                 'options' => $q->options,
                 'max_points' => $q->max_points,
                 'order' => $q->order,
+                'image_url' => $q->image_path ? Storage::disk('public')->url($q->image_path) : null,
             ];
         })->values()->all();
 

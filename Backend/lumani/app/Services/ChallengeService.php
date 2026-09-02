@@ -14,6 +14,7 @@ use App\Models\WeeklyChallenge;
 use App\Models\WeeklyChallengeQuestion;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 
@@ -334,6 +335,7 @@ class ChallengeService
                     'options' => $question->options,
                     'max_points' => $question->max_points,
                     'order' => $question->order,
+                    'image_url' => $question->image_path ? Storage::disk('public')->url($question->image_path) : null,
                 ];
             })
             ->values()

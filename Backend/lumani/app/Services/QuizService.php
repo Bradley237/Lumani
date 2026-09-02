@@ -14,6 +14,7 @@ use App\Models\QuizAttemptAnswer;
 use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class QuizService
@@ -78,6 +79,7 @@ class QuizService
                     'id' => $question->id,
                     'question_text' => $question->question_text,
                     'answer_choices' => $question->answer_choices,
+                    'image_url' => $question->image_path ? Storage::disk('public')->url($question->image_path) : null,
                 ];
             })
             ->values()

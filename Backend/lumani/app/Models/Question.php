@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
  * @property array<string, mixed>|list<mixed> $answer_choices
  * @property string $correct_choice
  * @property string|null $explanation
+ * @property string|null $image_path
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Quiz $quiz
@@ -35,6 +36,7 @@ class Question extends Model
         'answer_choices',
         'correct_choice',
         'explanation',
+        'image_path',
     ];
 
     /**

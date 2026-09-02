@@ -70,6 +70,7 @@ class ContentReviewService
                 'answer_choices' => $submittedQuestion->answer_choices,
                 'correct_choice' => $submittedQuestion->correct_choice,
                 'explanation' => $submittedQuestion->explanation,
+                'image_path' => $submittedQuestion->image_path,
             ]);
 
             $submittedQuestion->review_status = ReviewStatus::Published;

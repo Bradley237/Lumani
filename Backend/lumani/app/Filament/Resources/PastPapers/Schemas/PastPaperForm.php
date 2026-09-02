@@ -15,6 +15,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class PastPaperForm
 {
@@ -138,6 +139,20 @@ class PastPaperForm
                                 TextInput::make('order')
                                     ->numeric()
                                     ->default(0),
+                                FileUpload::make('image_path')
+                                    ->label('Question Image (optional)')
+                                    ->helperText('Resize ≤ 1200 px wide, JPEG q80 applied automatically.')
+                                    ->disk('public')
+                                    ->directory('question-images')
+                                    ->visibility('public')
+                                    ->image()
+                                    ->imagePreviewHeight('120')
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
+                                    ->maxSize(20480)
+                                    ->saveUploadedFileUsing(function (TemporaryUploadedFile $file): string {
+                                        return app(\App\Services\ImageProcessingService::class)->processAndStore($file);
+                                    })
+                                    ->columnSpanFull(),
                             ])
                             ->orderColumn('order')
                             ->collapsible()
