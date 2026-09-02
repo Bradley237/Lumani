@@ -21,7 +21,7 @@ class StreakReminderEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Keep your streak alive on Lumani! 🔥',
+            subject: 'Keep your streak alive on Lumani!',
         );
     }
 
