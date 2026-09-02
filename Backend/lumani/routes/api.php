@@ -83,10 +83,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tutor/conversations/{id}/messages', [AiTutorController::class, 'messages'])->name('api.tutor.conversations.messages');
     Route::post('/tutor/conversations/{id}/messages', [AiTutorController::class, 'sendMessage'])->middleware('throttle:tutor-messages')->name('api.tutor.conversations.send-message');
 
-    // Chapter and Past Paper Unlocks
+    // Chapter and Past Paper Unlocks & Access
     Route::post('/chapters/{id}/unlock', [ChapterUnlockController::class, 'unlock'])->name('api.chapters.unlock');
+    Route::get('/past-papers/{id}/access', [PastPaperController::class, 'accessStatus'])->name('api.past-papers.access-status');
     Route::post('/past-papers/{id}/unlock-paper', [PastPaperController::class, 'unlockPaper'])->name('api.past-papers.unlock-paper');
     Route::post('/past-papers/{id}/unlock-solution', [PastPaperController::class, 'unlockSolution'])->name('api.past-papers.unlock-solution');
+    Route::get('/past-papers/{id}/download-paper', [PastPaperController::class, 'downloadPaper'])->name('api.past-papers.download-paper');
+    Route::get('/past-papers/{id}/download-solution', [PastPaperController::class, 'downloadSolution'])->name('api.past-papers.download-solution');
+    Route::get('/past-papers/{id}/view-paper', [PastPaperController::class, 'viewPaper'])->name('api.past-papers.view-paper');
+    Route::get('/past-papers/{id}/view-solution', [PastPaperController::class, 'viewSolution'])->name('api.past-papers.view-solution');
 
     // Exam Sessions (Timed Practice)
     Route::post('/past-papers/{id}/exam-session/start', [ExamSessionController::class, 'start'])->name('api.past-papers.exam-session.start');

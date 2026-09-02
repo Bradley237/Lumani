@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PastPapers\Schemas;
 use App\Enums\ExamLevel;
 use App\Enums\ExamSubsystem;
 use App\Enums\PastPaperQuestionType;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -69,20 +70,32 @@ class PastPaperForm
                             ->default(15)
                             ->minValue(0)
                             ->helperText('Coin cost to unlock questions paper'),
-                        TextInput::make('file_path')
-                            ->label('Paper File Path / URL')
-                            ->maxLength(255)
-                            ->helperText('Storage path or direct URL to questions PDF'),
+                        FileUpload::make('file_path')
+                            ->label('Past Paper Document (PDF)')
+                            ->disk('local')
+                            ->directory('past-papers/questions')
+                            ->visibility('private')
+                            ->acceptedFileTypes(['application/pdf'])
+                            ->maxSize(51200)
+                            ->downloadable()
+                            ->openable()
+                            ->helperText('Upload the questions PDF document (stored securely on private disk).'),
                         TextInput::make('solution_coin_price')
                             ->required()
                             ->numeric()
                             ->default(20)
                             ->minValue(0)
                             ->helperText('Coin cost to unlock solutions document'),
-                        TextInput::make('solution_file_path')
-                            ->label('Solution File Path / URL')
-                            ->maxLength(255)
-                            ->helperText('Storage path or direct URL to solution PDF'),
+                        FileUpload::make('solution_file_path')
+                            ->label('Solution Document (PDF)')
+                            ->disk('local')
+                            ->directory('past-papers/solutions')
+                            ->visibility('private')
+                            ->acceptedFileTypes(['application/pdf'])
+                            ->maxSize(51200)
+                            ->downloadable()
+                            ->openable()
+                            ->helperText('Upload the worked solutions PDF document (stored securely on private disk).'),
                     ]),
                 Section::make('Exam-Condition Questions')
                     ->description('Add Multiple Choice or Structural/Essay questions for timed exam practice mode.')

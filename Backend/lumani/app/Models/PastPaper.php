@@ -51,6 +51,14 @@ class PastPaper extends Model
     ];
 
     /**
+     * @var list<string>
+     */
+    protected $hidden = [
+        'file_path',
+        'solution_file_path',
+    ];
+
+    /**
      * @return array<string, string>
      */
     protected function casts(): array
@@ -63,6 +71,22 @@ class PastPaper extends Model
             'coin_price' => 'integer',
             'solution_coin_price' => 'integer',
         ];
+    }
+
+    /**
+     * Determine if questions paper PDF exists on record.
+     */
+    public function hasPaperFile(): bool
+    {
+        return ! blank($this->file_path);
+    }
+
+    /**
+     * Determine if worked solution PDF exists on record.
+     */
+    public function hasSolutionFile(): bool
+    {
+        return ! blank($this->solution_file_path);
     }
 
     /**
