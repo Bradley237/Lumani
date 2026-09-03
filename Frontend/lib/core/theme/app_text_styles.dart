@@ -13,6 +13,7 @@ abstract final class AppTextStyles {
     height: 1.25,
     color: AppColors.textPrimary,
     letterSpacing: -0.5,
+    fontFeatures: [FontFeature.tabularFigures()],
   );
 
   /// Display Medium (28 / 700) - Large score boards, prominent stat displays
@@ -23,6 +24,7 @@ abstract final class AppTextStyles {
     height: 1.25,
     color: AppColors.textPrimary,
     letterSpacing: -0.25,
+    fontFeatures: [FontFeature.tabularFigures()],
   );
 
   /// Headline Large (24 / 700) - Main screen headers, modal titles
@@ -115,6 +117,7 @@ abstract final class AppTextStyles {
     fontWeight: FontWeight.w600,
     height: 1.20,
     color: AppColors.textPrimary,
+    fontFeatures: [FontFeature.tabularFigures()],
   );
 
   /// Label Small (10 / 600) - Micro labels, bottom nav labels
@@ -143,5 +146,6 @@ abstract final class AppTextStyles {
     height: 1.20,
     color: AppColors.textPrimary,
     letterSpacing: 0.2,
+    fontFeatures: [FontFeature.tabularFigures()],
   );
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/models/user_model.dart';
 import '../../../core/state/locale_cubit.dart';
 import '../../../core/state/subsystem_cubit.dart';
 import '../../../core/theme/app_dimensions.dart';
@@ -10,6 +11,14 @@ import '../../auth/cubit/auth_state.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  /// Extracts the [UserModel] from the current [AuthState], handling both
+  /// [Authenticated] and [AuthenticatedOffline].
+  UserModel? _userFrom(AuthState state) {
+    if (state is Authenticated) return state.user;
+    if (state is AuthenticatedOffline) return state.user;
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +48,12 @@ class HomeScreen extends StatelessWidget {
             children: [
               BlocBuilder<AuthCubit, AuthState>(
                 builder: (context, state) {
-                  final user = state is Authenticated ? state.user : null;
-                  final firstName = user?['first_name'] ?? 'Student';
+                  final user = _userFrom(state);
+                  final firstName = (user != null && user.firstName.isNotEmpty)
+                      ? user.firstName
+                      : 'Student';
+                  final isOffline = state is AuthenticatedOffline;
+
                   return Card(
                     child: Padding(
                       padding: AppDimensions.padding20,
@@ -50,9 +63,7 @@ class HomeScreen extends StatelessWidget {
                             radius: 24,
                             backgroundColor: theme.colorScheme.primaryContainer,
                             child: Text(
-                              firstName.isNotEmpty
-                                  ? firstName[0].toUpperCase()
-                                  : 'S',
+                              firstName[0].toUpperCase(),
                               style: TextStyle(
                                 color: theme.colorScheme.primary,
                                 fontWeight: FontWeight.bold,
@@ -72,9 +83,22 @@ class HomeScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  user?['email'] ?? '',
+                                  user?.email ?? '',
                                   style: theme.textTheme.bodySmall,
                                 ),
+                                if (isOffline)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: AppDimensions.space4,
+                                    ),
+                                    child: Text(
+                                      'Offline — using cached data',
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: theme.colorScheme.error,
+                                          ),
+                                    ),
+                                  ),
                               ],
                             ),
                           ),

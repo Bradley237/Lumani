@@ -4,6 +4,7 @@ import '../../features/auth/cubit/auth_cubit.dart';
 import '../../features/auth/cubit/auth_state.dart';
 import '../../features/auth/presentation/auth_entry_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
+import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/subsystem/presentation/subsystem_selection_screen.dart';
 import 'router_notifier.dart';
@@ -12,7 +13,7 @@ import 'router_notifier.dart';
 const _protectedRoutes = ['/home', '/subsystem'];
 
 /// Routes that should not be reached once authenticated.
-const _authOnlyRoutes = ['/auth'];
+const _authOnlyRoutes = ['/auth', '/onboarding'];
 
 class AppRouter {
   AppRouter._();
@@ -33,7 +34,8 @@ class AppRouter {
           return null;
         }
 
-        final isAuthenticated = authState is Authenticated;
+        final isAuthenticated =
+            authState is Authenticated || authState is AuthenticatedOffline;
 
         // Authenticated user must not be stuck on auth-only routes.
         if (isAuthenticated && _authOnlyRoutes.contains(location)) {
@@ -51,6 +53,10 @@ class AppRouter {
         GoRoute(
           path: '/splash',
           builder: (context, state) => const SplashScreen(),
+        ),
+        GoRoute(
+          path: '/onboarding',
+          builder: (context, state) => const OnboardingScreen(),
         ),
         GoRoute(
           path: '/auth',

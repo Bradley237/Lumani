@@ -18,12 +18,12 @@ void main() {
 
     test('Dark theme tokens match M3 design system specification', () {
       expect(AppColors.primaryDark, const Color(0xFF3B82F6));
-      expect(AppColors.secondaryDark, const Color(0xFFF59E0B));
+      expect(AppColors.secondaryDark, const Color(0xFFFFB800));
       expect(AppColors.tertiaryDark, const Color(0xFF14B8A6));
-      expect(AppColors.backgroundDark, const Color(0xFF0A0F1D));
-      expect(AppColors.surfaceDark, const Color(0xFF121829));
+      expect(AppColors.backgroundDark, const Color(0xFF090D16));
+      expect(AppColors.surfaceDark, const Color(0xFF131A29));
       expect(AppColors.textPrimaryDark, const Color(0xFFF8FAFC));
-      expect(AppColors.outlineDark, const Color(0xFF334155));
+      expect(AppColors.outlineDark, const Color(0x66334155));
       expect(AppColors.errorDark, const Color(0xFFEF4444));
     });
 

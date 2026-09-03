@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 
 /// Semantic M3 Color System Tokens for Lumani
+///
+/// Palette contract:
+///   Accent / Lumani Gold: #FFB800 (Dark) / #D97706 (Light)
+///   Academic Primary:     #0F2D59 (Oxford Navy) / #3B82F6 (Royal Cobalt)
+///   Dark surfaces:        Deep Obsidian (#090D16), Card Navy (#131A29),
+///                         Elevated Navy (#1D263B)
+///   Light surfaces:       Slate Background (#F8FAFC), Pure White (#FFFFFF)
 abstract final class AppColors {
   // --- Light Palette ---
   static const Color primaryLight = Color(0xFF0F2D59);
@@ -22,21 +29,30 @@ abstract final class AppColors {
 
   // --- Dark Palette ---
   static const Color primaryDark = Color(0xFF3B82F6);
-  static const Color onPrimaryDark = Color(0xFF0A0F1D);
-  static const Color secondaryDark = Color(0xFFF59E0B);
-  static const Color onSecondaryDark = Color(0xFF0A0F1D);
+  static const Color onPrimaryDark = Color(0xFF090D16);
+  static const Color secondaryDark = Color(0xFFFFB800);
+  static const Color onSecondaryDark = Color(0xFF090D16);
   static const Color tertiaryDark = Color(0xFF14B8A6);
-  static const Color onTertiaryDark = Color(0xFF0A0F1D);
-  static const Color backgroundDark = Color(0xFF0A0F1D);
+  static const Color onTertiaryDark = Color(0xFF090D16);
+  static const Color backgroundDark = Color(0xFF090D16);
   static const Color onBackgroundDark = Color(0xFFF8FAFC);
-  static const Color surfaceDark = Color(0xFF121829);
+  static const Color surfaceDark = Color(0xFF131A29);
   static const Color onSurfaceDark = Color(0xFFF8FAFC);
-  static const Color surfaceElevatedDark = Color(0xFF1E2640);
+  static const Color surfaceElevatedDark = Color(0xFF1D263B);
   static const Color textPrimaryDark = Color(0xFFF8FAFC);
   static const Color textSecondaryDark = Color(0xFF94A3B8);
-  static const Color outlineDark = Color(0xFF334155);
+
+  /// Subtle 1dp border: #334155 at 40% opacity.
+  static const Color outlineDark = Color(0x66334155);
   static const Color errorDark = Color(0xFFEF4444);
-  static const Color onErrorDark = Color(0xFF0A0F1D);
+  static const Color onErrorDark = Color(0xFF090D16);
+
+  // --- Accent Tokens ---
+  /// Lumani Gold (Dark mode) — streaks, coin balances, unlocks, critical CTAs.
+  static const Color accentGoldDark = Color(0xFFFFB800);
+
+  /// Lumani Gold (Light mode).
+  static const Color accentGoldLight = Color(0xFFD97706);
 
   // --- Legacy Compatibility Tokens ---
   static const Color primary = primaryDark;

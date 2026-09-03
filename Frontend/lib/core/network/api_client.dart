@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -25,26 +27,31 @@ typedef OnUnauthenticated = void Function();
 ///
 /// The base URL is injected at build time via `--dart-define`:
 ///
-///   Android Emulator (default):
-///     flutter run
-///     (defaults to http://10.0.2.2:8000/api)
+///   flutter run --dart-define=API_BASE_URL=http://192.168.1.10:8000/api
+///   flutter build apk --dart-define=API_BASE_URL=https://api.lumani.cm/api
 ///
-///   iOS Simulator:
-///     flutter run --dart-define=API_BASE_URL=http://localhost:8000/api
-///
-///   Physical device (replace with your machine's LAN IP):
-///     flutter run --dart-define=API_BASE_URL=http://192.168.1.10:8000/api
-///
-///   Production:
-///     flutter build apk --dart-define=API_BASE_URL=https://api.lumani.cm/api
+/// When no `--dart-define` is provided, the URL is resolved per-platform:
+///   Android Emulator → http://10.0.2.2:8000/api
+///   iOS Simulator    → http://127.0.0.1:8000/api
 ///
 /// There is ONE place where this is defined: this file.
 /// Do not hardcode any URL in feature code.
 abstract final class ApiConfig {
-  static const String baseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:8000/api',
-  );
+  /// Explicitly set via `--dart-define=API_BASE_URL=...` at build time.
+  /// Empty string when not provided.
+  static const String _envUrl = String.fromEnvironment('API_BASE_URL');
+
+  /// Resolves the correct base URL for the current platform.
+  ///
+  /// Priority:
+  /// 1. Explicit `--dart-define` value (production / staging / LAN IP).
+  /// 2. iOS → `127.0.0.1` (simulator loopback).
+  /// 3. Android / fallback → `10.0.2.2` (emulator host gateway).
+  static String get baseUrl {
+    if (_envUrl.isNotEmpty) return _envUrl;
+    final host = Platform.isIOS ? '127.0.0.1' : '10.0.2.2';
+    return 'http://$host:8000/api';
+  }
 }
 
 class ApiClient {

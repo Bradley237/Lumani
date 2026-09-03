@@ -14,11 +14,11 @@ void main() {
       expect(AppColors.primaryLight, const Color(0xFF0F2D59));
       expect(AppColors.primaryDark, const Color(0xFF3B82F6));
       expect(AppColors.secondaryLight, const Color(0xFFD97706));
-      expect(AppColors.secondaryDark, const Color(0xFFF59E0B));
+      expect(AppColors.secondaryDark, const Color(0xFFFFB800));
       expect(AppColors.tertiaryLight, const Color(0xFF0D9488));
       expect(AppColors.tertiaryDark, const Color(0xFF14B8A6));
       expect(AppColors.backgroundLight, const Color(0xFFF8FAFC));
-      expect(AppColors.backgroundDark, const Color(0xFF0A0F1D));
+      expect(AppColors.backgroundDark, const Color(0xFF090D16));
     });
 
     test('AppDimensions follow 4-point spacing scale', () {

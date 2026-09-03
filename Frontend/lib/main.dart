@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app/router/app_router.dart';
+import 'core/localization/app_localizations.dart';
 import 'core/network/api_client.dart';
 import 'core/state/locale_cubit.dart';
 import 'core/state/subsystem_cubit.dart';
@@ -38,10 +40,12 @@ class LumaniApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localeCubit = LocaleCubit();
+
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => LocaleCubit()),
-        BlocProvider(create: (_) => SubsystemCubit()),
+        BlocProvider(create: (_) => localeCubit),
+        BlocProvider(create: (_) => SubsystemCubit(localeCubit: localeCubit)),
         BlocProvider.value(value: authCubit),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(
@@ -53,6 +57,13 @@ class LumaniApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             locale: locale,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
             routerConfig: AppRouter.createRouter(authCubit),
           );
         },

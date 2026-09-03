@@ -40,11 +40,9 @@ class _AuthEntryScreenState extends State<AuthEntryScreen>
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is Authenticated) {
-          final userExamSystem = state.user['exam_system'];
           final subsystemState = context.read<SubsystemCubit>().state;
 
-          if (userExamSystem == 'anglophone' ||
-              userExamSystem == 'francophone') {
+          if (state.user.activeSubsystem != Subsystem.none) {
             context.go('/home');
           } else if (subsystemState.subsystem != Subsystem.none) {
             context.go('/home');
